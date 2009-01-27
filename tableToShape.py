@@ -28,7 +28,7 @@ def Spec(s):
         except ValueError:
             return ("C",len(s),0)
 
-def TableToShape(inName,xField,yField,outName,quadrant):
+def TableToShape(inName,xField,yField,outName,quadrant,shape):
     inFile=open(inName,'r')
     header=inFile.readline().strip().split(',')
     lines=[l.strip().split(',') for l in inFile.readlines()]
@@ -51,19 +51,27 @@ def TableToShape(inName,xField,yField,outName,quadrant):
         xScale=1
         yScale=-1
 
-    s=shapefile.Shapefile(shapeType=1)
-    for l in lines:
-        s.add([[float(l[xIndex])*xScale,float(l[yIndex])*yScale]])
+    if shape=="point":
+        s=shapefile.Shapefile(shapeType=1)
+        for l in lines:
+            s.add([[float(l[xIndex])*xScale,float(l[yIndex])*yScale]])
     
-    specs=map(Spec,lines[0])
-    for l in lines:
-        tempSpecs=[]
-        for n in l:
-            tempSpecs.append(Spec(n))
-        specs=IntegrateSpecs(specs,tempSpecs)      
-            
-    d=databasefile.DatabaseFile(header,specs,lines)
-    s.table.extend(d)
+        specs=map(Spec,lines[0])
+        for l in lines:
+            tempSpecs=[]
+            for n in l:
+                tempSpecs.append(Spec(n))
+            specs=IntegrateSpecs(specs,tempSpecs)      
+                
+        d=databasefile.DatabaseFile(header,specs,lines)
+        s.table.extend(d)
+    else:
+        s=shapefile.Shapefile(shapeType=3)
+        lines=apply(zip,lines)
+        lines=zip(map(float,lines[xIndex]),map(float,lines[yIndex]))
+        lines=[(x*xScale,y*yScale) for x,y in lines]
+        s.add(lines)
+
     s.writeFile(outName[:outName.rfind(".")])
     
 
@@ -73,4 +81,5 @@ if __name__ == "__main__":
     yField=sys.argv[3]
     outName=sys.argv[4]
     quadrant=sys.argv[5]
-    TableToShape(inName,xField,yField,outName,quadrant)
+    shape=sys.argv[6]
+    TableToShape(inName,xField,yField,outName,quadrant,shape)
