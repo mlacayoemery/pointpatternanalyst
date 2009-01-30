@@ -40,7 +40,14 @@ class DatabaseFile:
         self.records=list(self.read(inFile))
         self.fieldnames=self.records.pop(0)
         self.fieldspecs=self.records.pop(0)
-        self.records=[map(float,r) for r in self.records]
+        types=[]
+        for t,s,d in self.fieldspecs:
+            if t == "N":
+                types.append(float)
+            else:
+                types.append(str)
+                
+        self.records=[map(lambda (f,p): f(p), zip(types,r)) for r in self.records]
         inFile.close()
 
     def read(self,f):
