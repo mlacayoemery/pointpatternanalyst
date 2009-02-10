@@ -146,6 +146,82 @@ class Shapefile:
         else:
             self.table.addRow([len(self.shapes)])
 
+    def readFile(self,inName):
+        inShp=open(inName+".shp",'rb')
+        self.readShp(inShp)
+        inShp.close()
+        
+        self.table=databasefile.DatabaseFile([],[],[]).readFile(inName+".dbf")
+
+    def readShp(self,inShp):
+        #shp file header
+        #byte 0, File Code
+        self.fileCode,=struct.unpack('>i',inShp.read(4))
+        inShp.seek(24)   
+        #byte 24, File Length, total length of file in 16-bit words
+        size,=struct.unpack('>i',inShp.read(4))
+        #byte 28, Version, integer
+        self.version,=struct.unpack('<i',inShp.read(4))
+        #byte 32, shape type
+        self.shapeType,=struct.unpack('<i',inShp.read(4))
+        #byte 36, Bounding Box Xmin
+        self.Xmin,=struct.unpack('<d',inShp.read(8))
+        #byte 44 Bounding Box Ymin
+        self.Ymin,=struct.unpack('<d',inShp.read(8))
+        #byte 52 Bounding Box Xmax
+        self.Xmax,=struct.unpack('<d',inShp.read(8))
+        #byte 60 Bounding Box Ymax
+        self.Ymax,=struct.unpack('<d',inShp.read(8))
+        #byte 68* Bounding Box Zmin
+        self.Zmin,=struct.unpack('<d',inShp.read(8))
+        #byte 76* Bounding Box Zmax
+        self.Zmax,=struct.unpack('<d',inShp.read(8))
+        #byte 84* Bounding Box Mmin
+        self.Mmin,=struct.unpack('<d',inShp.read(8))
+        #byte 92* Bounding Box Mmax
+        self.Mmax,=struct.unpack('<d',inShp.read(8))
+
+        #read shapes
+        if self.shapeType==1:
+            for i in range((size-50)/10):
+                id,=struct.unpack('>i',inShp.read(4))
+                length,=struct.unpack('>i',inShp.read(4))
+                shapeType,=struct.unpack('<i',inShp.read(4))
+                x,=struct.unpack('<d',inShp.read(8))
+                y,=struct.unpack('<d',inShp.read(8))
+                self.add([(x,y)])
+                               
+        elif self.shapeType==5 or self.shapeType==3:
+            raise ValueError, "Sorry only poiny reading is currently supported."
+##            while inShp.tell()<(size*2):
+##                id,=struct.unpack('>i',inShp.read(4))
+##                length,=struct.unpack('>i',inShp.read(4))
+##                shapeType,=struct.unpack('<i',inShp.read(4))
+##                Xmin,=struct.unpack('<d',inShp.read(8))
+##                Ymin,=struct.unpack('<d',inShp.read(8))
+##                Xmax,=struct.unpack('<d',inShp.read(8))
+##                Ymax,=struct.unpack('<d',inShp.read(8))
+##                numParts,=struct.unpack('<i',inShp.read(4))
+##                numPoints,=struct.unpack('<i',inShp.read(4))
+##
+##                numParts+=1
+##                if numParts==1:
+##                    raise ValueError, "Sorry multipart shapes are not supported."
+##
+##                parts=[]
+##                print "Here"
+##                for i in range(numParts):
+##                    parts.append(struct.unpack('<i',inShp.read(4)))
+##
+##                points=[]
+##                for i in range(numPoints):
+##                    x,=struct.unpack('<d',inShp.read(8))
+##                    y,=struct.unpack('<d',inShp.read(8))
+##                    points.append((x,y))
+##                print points
+##                self.add(points)
+                    
+        
     def writeFile(self,outName):
         outShp=open(outName+".shp",'wb')
         outShx=open(outName+".shx",'wb')
@@ -295,13 +371,18 @@ class Shapefile:
 
 
 if __name__=="__main__":
-    print
+    print "Begin Main"
     s=Shapefile(1)
     for p in hexagonCentroids(0,4,0,3,1):
         s.add([p])
     s.writeFile("C:/grid")
 
-    t=Shapefile(3)
-    for x,y in hexagonCentroids(0,4,0,3,1):
-        t.add(hexagon(x,y,.5))
-    t.writeFile("C:/mesh")
+##    t=Shapefile(3)
+##    for x,y in hexagonCentroids(0,4,0,3,1):
+##        t.add(hexagon(x,y,.5))
+##    t.writeFile("C:/mesh")
+##
+##    u=Shapefile()
+##    u.readFile("C:/mesh")
+##    
+    print "End Main"
