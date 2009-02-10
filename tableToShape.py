@@ -16,7 +16,7 @@ def IntegrateSpecs(s1,s2):
             fract=max([s[0][2],s[1][2]])
             s3.append(("N",whole+fract,fract))
     return s3
-\
+
 def Spec(s):
     try:
         int(s)
@@ -28,7 +28,7 @@ def Spec(s):
         except ValueError:
             return ("C",len(s),0)
 
-def TableToShape(inName,xField,yField,outName,quadrant,shape):
+def TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventString):
     inFile=open(inName,'r')
     header=inFile.readline().strip().split(',')
     lines=[l.strip().split(',') for l in inFile.readlines()]
@@ -36,6 +36,16 @@ def TableToShape(inName,xField,yField,outName,quadrant,shape):
 
     xIndex=header.index(xField)
     yIndex=header.index(yField)
+    
+
+    #keep only certain features
+    if eventField!="#":
+        eventIndex=header.index(eventField)
+        if eventString=="#":
+            eventString=""
+        for i in range(len(lines)-1,-1,-1):
+            if lines[i][eventIndex]!=eventString:
+                lines.pop(i)
 
     #set the scaling for the quadrant
     if quadrant=="1":
@@ -82,4 +92,6 @@ if __name__ == "__main__":
     outName=sys.argv[4]
     quadrant=sys.argv[5]
     shape=sys.argv[6]
-    TableToShape(inName,xField,yField,outName,quadrant,shape)
+    eventField=sys.argv[7]
+    eventString=sys.argv[8]
+    TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventString)
