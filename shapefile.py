@@ -5,6 +5,88 @@ import sys, struct
 import databasefile
 import math
 
+def convexHull(inName,outName):
+    inShapefile=Shapefile(1)
+    inShapefile.readFile(inName)
+    outShapefile=Shapefile(5)
+    outShapefile.add(GrahamScan(inShapefile.shapes))
+
+def rightTurn(p1,p2,p3):
+    r1,theta1=polar(p1[0],p1[1],p2[0],p2[1])
+    r2,theta2=polar(p3[0],p3[1],p2[0],p2[1])
+
+    if theta1-theta2>=math.pi:
+        return True
+    else:
+        return False
+    #return math.atan((((p2[0]-p3[0])**2+(p2[1]-p2[1])**2)**0.5)/(((p1[0]-p2[0])**2+(p1[1]-p2[1])**2)**0.5))
+    #return (((p2[0] - p1[0])*(p3[1] - p1[1])) - ((p3[0] - p1[0])*(p2[1] - p1[1])))
+
+def polarDeg(x,y):
+    r,theta=polar(x,y)
+    return r,180*theta/math.pi
+
+def polar(x,y,originX=0,originY=0):
+    x=x-originX
+    y=y-originY
+    
+    if x==0:
+        if y==0:
+            return(0,0)
+        elif y>0:
+            return (y,math.pi/2)
+        else:
+            return (abs(y),3*math.pi/2)
+    elif x>0:
+        if y==0:
+            return(x,0)
+        elif y>0:
+            return ((x**2+y**2)**0.5,math.atan(y/x))
+        else:
+            return ((x**2+y**2)**0.5,(2*math.pi)+math.atan(y/x))
+    else:
+        if y==0:
+            return (abs(x),math.pi)
+        elif y>0:
+            return ((x**2+y**2)**0.5,math.pi+math.atan(y/x))
+        else:
+            return ((x**2+y**2)**0.5,math.pi+math.atan(y/x))
+        
+
+def rPolar(x,y,originX=0,originY=0):
+    r,theta=polar(x,y,originX,originY)
+    return theta,r
+
+def relative(p1,p2):
+    return p2[0]-p1[0],p2[1]-p1[0]
+
+def GrahamScan(points):
+    #get smallest y, choose smallest x if tie
+    map(lambda x: x.reverse(),points)
+    points.sort()
+    map(lambda x: x.reverse(),points)    
+    perimeter=[points.pop(0)]
+
+    #sort by tangent with origin, choose smallest as second point
+    points.sort(lambda a,b: cmp(rPolar(a[0],a[1],perimeter[0][0],perimeter[0][1]),rPolar(b[0],b[1],perimeter[0][0],perimeter[0][1])))
+    t=Shapefile(3)
+    for p in points:
+        t.add([perimeter[0],p])
+    t.writeFile("C:/order")
+    
+    perimeter.append(points.pop(0))
+    points.append(perimeter[0])
+
+    for p in points:
+        if not rightTurn(perimeter[-2],perimeter[-1],p):
+            perimeter.pop(-1)
+            perimeter.append(p)
+        else:
+            perimeter.append(p)
+
+    return perimeter            
+
+
 def buffer(x1,y1,x2,y2,r):
     """
     """
@@ -371,18 +453,8 @@ class Shapefile:
 
 
 if __name__=="__main__":
-    print "Begin Main"
     s=Shapefile(1)
-    for p in hexagonCentroids(0,4,0,3,1):
+    for p in hexagonCentroids(0,7,0,5,1):
         s.add([p])
     s.writeFile("C:/grid")
 
-##    t=Shapefile(3)
-##    for x,y in hexagonCentroids(0,4,0,3,1):
-##        t.add(hexagon(x,y,.5))
-##    t.writeFile("C:/mesh")
-##
-##    u=Shapefile()
-##    u.readFile("C:/mesh")
-##    
-    print "End Main"
