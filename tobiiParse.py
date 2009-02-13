@@ -1,12 +1,17 @@
-import sys
+import sys, databasefile
 
 def tobiiParse(inName,outName):
+    headerLength=24
+    #read in file, remove header, strip and split lines
     inFile=open(inName)
-    outFile=open(outName,'w')
-    lines=inFile.readlines()
-    outFile.write(''.join(lines[24:]).replace("\t",",").replace("\r",""))
+    lines=inFile.readlines()[headerLength:]
     inFile.close()
-    outFile.close()
+    header=lines.pop(0).strip().split("\t")
+    lines=[l.split("\t") for l in lines]
+            
+    d=databasefile.DatabaseFile(header,None,lines)
+    d.refreshSpecs()
+    d.writeFile(outName)    
 
 if __name__=="__main__":
     inName=sys.argv[1]
