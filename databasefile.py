@@ -1,13 +1,127 @@
 #Martin Lacayo-Emery
 #11/20/2008
 
-import struct, datetime, decimal, itertools
+import struct
+import datetime
+import decimal
+import itertools
+
+def spec(valueString):
+    """
+    spec(valueString) accepts a string and returns the data type, width, and precision.
+    The results are the smallest of each variable that can store the input.
+
+    >>> spec("1")
+    ('N', 1, 0)
+    >>> spec("-1")
+    ('N', 2, 0)
+    >>> spec("1.0")
+    ('N', 3, 2)
+    >>> spec("-1.0")
+    ('N', 4, 2)
+    >>> spec("1.0Q")
+    ('C', 4, 0)
+    >>> spec("-1.0Q")
+    ('C', 5, 0)
+    """
+    try:
+        int(valueString)
+        return ("N",len(valueString),0)
+    except ValueError:
+        try:
+            float(valueString)
+            return ("N",len(valueString),len(valueString)-valueString.rfind("."))
+        except ValueError:
+            return ("C",len(valueString),0)
+
+def typelist(specList):
+    """
+    typelist(specList) accepts a list of specs and returns their Python types
+    >>> typelist([('N',1,0),('N',1,2),('C',5,0)])
+    [<type 'int'>, <type 'float'>, <type 'str'>]
+    """
+    l=[]
+    for t,w,d in specList:
+        if t == "N":
+            if d==0:
+                l.append(int)
+            else:
+                l.append(float)
+        else:
+            l.append(str)
+    return l
+        
+##def mapapply(mapapplylist):
+##    """
+##    mapapply(mapapplylist) accepts a list of lists,
+##    each element in the list is a list begining with a function followed by parameters
+##    the fucntion is called with the remainging list items
+##
+##    >>> mapapply([(int,"1"), (float,"1.0"), (str, 4)])
+##    [1, 1.0, "4"]
+##    """
+##    l=[]
+##    for m in mapapplylist:
+##        l.append(apply(apply,m))
+##    return l
+
+
+def integratespecs(s1,s2):
+    """
+    integratespecs(s1,s2) takes two lists of specs and integrates them.
+    The result is a single list the contains specs compatible with both lists.
+
+    >>> integratespecs([("N",2,0),("N",4,2),("N",2,0)],[("N",4,0),("N",4,0),("C",4,0)])
+    [('N', 4, 0), ('N', 6, 2), ('C', 4, 0)]
+    """
+    s3=[]
+    for s in zip(s1,s2):
+        #if either charater type
+        if s[0][0]=="C" or s[1][0]=="C":
+            #pick the longer of the two
+            if s[0][1]>s[1][1]:
+                s3.append(("C",s[0][1],0))
+            else:
+                s3.append(("C",s[1][1],0))
+            
+        else:
+            whole=max([s[0][1]-s[0][2],s[1][1]-s[1][2]])
+            fract=max([s[0][2],s[1][2]])
+            s3.append(("N",whole+fract,fract))
+    return s3
+
+
 
 class DatabaseFile:
+    """
+    DatabaseFile is a class that stores a DBF file
+
+    >>> d=DatabaseFile(["Int","Float","String"],[("N",5,0),("N",5,3),("C",5,0)],[[12345,12.45,"12345"]])
+    >>> d.refreshSpecs()
+    >>> d.fieldspecs
+    [('N', 5, 0), ('N', 5, 3), ('N', 5, 0)]
+    >>> d.addRow(["Hello","World", "!"])
+    >>> d.refreshSpecs()
+    >>> d.fieldspecs
+    [('C', 5, 0), ('C', 5, 0), ('C', 5, 0)]
+    >>> d.records.pop(1)
+    ['Hello', 'World', '!']
+    >>> d.refreshSpecs()
+    >>> d.fieldspecs
+    [('N', 5, 0), ('N', 5, 3), ('N', 5, 0)]
+    """
     def __init__(self,fieldnames,fieldspecs,records):
         self.fieldnames=fieldnames
         self.fieldspecs=fieldspecs
         self.records=records
+
+    def refreshSpecs(self):
+        #if rows in table
+        if len(self.records) > 0:
+            specs=map(spec,map(str,self.records[0]))
+            for l in self.records[1:]:
+                specs=integratespecs(specs,map(spec,l))
+            self.fieldspecs=specs
 
     def extend(self,other):
         """
@@ -168,3 +282,9 @@ class DatabaseFile:
 
         # End of file
         f.write('\x1A')
+
+if __name__ == "__main__":
+    import doctest
+    print
+    doctest.testmod()
+        
