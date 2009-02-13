@@ -120,7 +120,7 @@ class DatabaseFile:
         if len(self.records) > 0:
             specs=map(spec,map(str,self.records[0]))
             for l in self.records[1:]:
-                specs=integratespecs(specs,map(spec,l))
+                specs=integratespecs(specs,map(spec,map(str,l)))
             self.fieldspecs=specs
 
     def extend(self,other):

@@ -1,51 +1,27 @@
-import sys, shapefile, databasefile
+import sys
+import shapefile
+import databasefile
 
-def IntegrateSpecs(s1,s2):
-    s3=[]
-    for s in zip(s1,s2):
-        #if either charater type
-        if s[0][0]=="C" or s[1][0]=="C":
-            #pick the longer of the two
-            if s[0][1]>s[1][1]:
-                s3.append(("C",s[0][1],0))
-            else:
-                s3.append(("C",s[1][1],0))
-            
-        else:
-            whole=max([s[0][1]-s[0][2],s[1][1]-s[1][2]])
-            fract=max([s[0][2],s[1][2]])
-            s3.append(("N",whole+fract,fract))
-    return s3
+def TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventString,changeTypes):
+    #read in data table
+    inFile=databasefile.DatabaseFile([],[],[])
+    inFile.readFile(inName)
 
-def Spec(s):
-    try:
-        int(s)
-        return ("N",len(s),0)
-    except ValueError:
-        try:
-            float(s)
-            return ("N",len(s),len(s)-s.rfind("."))
-        except ValueError:
-            return ("C",len(s),0)
-
-def TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventString):
-    inFile=open(inName,'r')
-    header=inFile.readline().strip().split(',')
-    lines=[l.strip().split(',') for l in inFile.readlines()]
-    inFile.close()
-
-    xIndex=header.index(xField)
-    yIndex=header.index(yField)
-    
-
-    #keep only certain features
+    #get index for coordinate fields    
+    xIndex=inFile.fieldnames.index(xField)
+    yIndex=inFile.fieldnames.index(yField)
+              
+    #filter out rows that match the criteria
     if eventField!="#":
-        eventIndex=header.index(eventField)
+        eventIndex=inFile.fieldnames.index(eventField)
         if eventString=="#":
             eventString=""
-        for i in range(len(lines)-1,-1,-1):
-            if lines[i][eventIndex]!=eventString:
-                lines.pop(i)
+        for i in range(len(inFile.records)-1,-1,-1):
+            if inFile.records[i][eventIndex].strip()!=eventString:
+                inFile.records.pop(i)
+
+    if changeTypes:
+        inFile.refreshSpecs()
 
     #set the scaling for the quadrant
     if quadrant=="1":
@@ -61,30 +37,27 @@ def TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventStr
         xScale=1
         yScale=-1
 
+    #create geometry
     if shape=="point":
+        #add points to shapefile
         s=shapefile.Shapefile(shapeType=1)
-        for l in lines:
+        for l in inFile.records:
             s.add([[float(l[xIndex])*xScale,float(l[yIndex])*yScale]])
-    
-        specs=map(Spec,lines[0])
-        for l in lines:
-            tempSpecs=[]
-            for n in l:
-                tempSpecs.append(Spec(n))
-            specs=IntegrateSpecs(specs,tempSpecs)      
-                
-        d=databasefile.DatabaseFile(header,specs,lines)
-        s.table.extend(d)
+
+        #append data table to geometry            
+        s.table.extend(inFile)
+        
     else:
+        #create geometry
         s=shapefile.Shapefile(shapeType=3)
-        lines=apply(zip,lines)
-        lines=zip(map(float,lines[xIndex]),map(float,lines[yIndex]))
-        lines=[(x*xScale,y*yScale) for x,y in lines]
-        s.add(lines)
+        if len(inFile.records):
+            inFile.records=apply(zip,inFile.records)
+            inFile.records=zip(map(float,inFile.records[xIndex]),map(float,inFile.records[yIndex]))
+            inFile.records=[(float(x)*xScale,float(y)*yScale) for x,y in inFile.records]
+            s.add(inFile.records)
 
     s.writeFile(outName[:outName.rfind(".")])
     
-
 if __name__ == "__main__":
     inName=sys.argv[1]
     xField=sys.argv[2]
@@ -94,4 +67,9 @@ if __name__ == "__main__":
     shape=sys.argv[6]
     eventField=sys.argv[7]
     eventString=sys.argv[8]
-    TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventString)
+    if sys.argv[9]=="true":
+        changeTypes=True
+    else:
+        changeTypes=False
+        
+    TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventString,changeTypes=True)
