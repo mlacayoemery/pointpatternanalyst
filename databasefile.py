@@ -9,7 +9,7 @@ import itertools
 def spec(valueString):
     """
     spec(valueString) accepts a string and returns the data type, width, and precision.
-    The results are the smallest of each variable that can store the input.
+    The results are the smallest of each data type, width, and precision that can store the input.
 
     >>> spec("1")
     ('N', 1, 0)
@@ -24,6 +24,7 @@ def spec(valueString):
     >>> spec("-1.0Q")
     ('C', 5, 0)
     """
+    valueString=str(valueString)
     try:
         int(valueString)
         return ("N",len(valueString),0)
@@ -96,19 +97,6 @@ class DatabaseFile:
     """
     DatabaseFile is a class that stores a DBF file
 
-    >>> d=DatabaseFile(["Int","Float","String"],[("N",5,0),("N",5,3),("C",5,0)],[[12345,12.45,"12345"]])
-    >>> d.refreshSpecs()
-    >>> d.fieldspecs
-    [('N', 5, 0), ('N', 5, 3), ('N', 5, 0)]
-    >>> d.addRow(["Hello","World", "!"])
-    >>> d.refreshSpecs()
-    >>> d.fieldspecs
-    [('C', 5, 0), ('C', 5, 0), ('C', 5, 0)]
-    >>> d.records.pop(1)
-    ['Hello', 'World', '!']
-    >>> d.refreshSpecs()
-    >>> d.fieldspecs
-    [('N', 5, 0), ('N', 5, 3), ('N', 5, 0)]
     """
     def __init__(self,fieldnames,fieldspecs,records):
         self.fieldnames=fieldnames
@@ -116,6 +104,34 @@ class DatabaseFile:
         self.records=records
 
     def refreshSpecs(self):
+        """
+        >>> d=DatabaseFile(["Int","Float","String"],[("N",5,0),("N",5,3),("C",5,0)],[[12345,12.45,"12345"]])
+        >>> d.refreshSpecs()
+        >>> d.fieldspecs
+        [('N', 5, 0), ('N', 5, 3), ('N', 5, 0)]
+        >>> d.addRow(["Hello","World", "!"])
+        >>> d.refreshSpecs()
+        >>> d.fieldspecs
+        [('C', 5, 0), ('C', 5, 0), ('C', 5, 0)]
+        >>> d.records.pop(1)
+        ['Hello', 'World', '!']
+        >>> d.refreshSpecs()
+        >>> d.fieldspecs
+        [('N', 5, 0), ('N', 5, 3), ('N', 5, 0)]
+        >>> fieldnames=["Int","Float","String"]
+        >>> fieldspecs=[("N",5,0),("N",5,3),("C",13,0)]
+        >>> records=[["12345","12.45","one two three"]]
+        >>> filename="C:/dbfwriteFile.dbf"
+        >>> d=DatabaseFile(fieldnames,fieldspecs,records)
+        >>> d.refreshSpecs()
+        >>> d.writeFile(filename)
+        >>> e=DatabaseFile([],[],[])
+        >>> e.readFile(filename)
+        >>> e.fieldnames==fieldnames
+        True
+        >>> e.records==records
+        True
+        """
         #if rows in table
         if len(self.records) > 0:
             specs=map(spec,map(str,self.records[0]))
@@ -150,18 +166,27 @@ class DatabaseFile:
             raise ValueError, "The record does have the same number of columns as the table."
 
     def readFile(self,inName):
+        """
+        readFile reads a DBF file from the specified path
+        >>> fieldnames=["Int","Float","String"]
+        >>> fieldspecs=[("N",5,0),("N",5,3),("C",5,0)]
+        >>> records=[["12345","12.45","12345"]]
+        >>> filename="C:/dbfwriteFile.dbf"
+        >>> d=DatabaseFile(fieldnames,fieldspecs,records)
+        >>> d.writeFile(filename)
+        >>> e=DatabaseFile([],[],[])
+        >>> e.readFile(filename)
+        >>> e.fieldnames==fieldnames
+        True
+        >>> e.fieldspecs==fieldspecs
+        True
+        >>> e.records==records
+        True
+        """        
         inFile=open(inName,'rb')
         self.records=list(self.read(inFile))
         self.fieldnames=self.records.pop(0)
         self.fieldspecs=self.records.pop(0)
-        types=[]
-        for t,s,d in self.fieldspecs:
-            if t == "N":
-                types.append(float)
-            else:
-                types.append(str)
-                
-        self.records=[map(lambda (f,p): f(p), zip(types,r)) for r in self.records]
         inFile.close()
 
     def read(self,f):
@@ -205,12 +230,13 @@ class DatabaseFile:
                     continue
                 if typ == "N":
                     value = value.replace('\0', '').lstrip()
-                    if value == '':
-                        value = 0
-                    elif deci:
-                        value = decimal.Decimal(value)
-                    else:
-                        value = int(value)
+                    #keep as string
+##                    if value == '':
+##                        value = 0
+##                    elif deci:
+##                        value = decimal.Decimal(value)
+##                    else:
+##                        value = int(value)
                 elif typ == 'D':
                     y, m, d = int(value[:4]), int(value[4:6]), int(value[6:8])
                     value = datetime.date(y, m, d)
@@ -220,6 +246,14 @@ class DatabaseFile:
             yield result
 
     def writeFile(self,outName):
+        """
+        writeFile writes a DBF file to the specified path
+        >>> fieldnames=["Int","Float","String"]
+        >>> fieldspecs=[("N",5,0),("N",5,3),("C",5,0)]
+        >>> records=[[12345,12.45,"12345"]]
+        >>> d=DatabaseFile(fieldnames,fieldspecs,records)
+        >>> d.writeFile("C:/dbfwriteFile.dbf")
+        """
         outFile=open(outName,'wb')
         self.write(outFile)
         outFile.close()
@@ -287,4 +321,3 @@ if __name__ == "__main__":
     import doctest
     print
     doctest.testmod()
-        
