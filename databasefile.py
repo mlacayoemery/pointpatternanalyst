@@ -98,10 +98,13 @@ class DatabaseFile:
     DatabaseFile is a class that stores a DBF file
 
     """
-    def __init__(self,fieldnames,fieldspecs,records):
-        self.fieldnames=fieldnames
-        self.fieldspecs=fieldspecs
-        self.records=records
+    def __init__(self,fieldnames,fieldspecs,records,dbffile=None):
+        if dbffile==None:
+            self.fieldnames=fieldnames
+            self.fieldspecs=fieldspecs
+            self.records=records
+        else:
+            self.readFile(dbffile)
 
     def refreshSpecs(self):
         """
@@ -164,6 +167,37 @@ class DatabaseFile:
             self.records.append(record)
         else:
             raise ValueError, "The record does have the same number of columns as the table."
+
+    def addFileColumn(self, inName,colName):
+        """
+        Appends a column form a DBF file to the current table.
+        """
+        f=open(inName,"rb")
+        numrec, lenheader = struct.unpack('<xxxxLH22x', f.read(32))    
+        numfields = (lenheader - 33) // 32
+
+        fields = []
+        for fieldno in xrange(numfields):
+            name, typ, size, deci = struct.unpack('<11sc4xBB14x', f.read(32))
+            name = name.replace('\0', '')       # eliminate NULs from string   
+            fields.append((name, typ, size, deci))
+        #yield [field[0] for field in fields]
+        #yield [tuple(field[1:]) for field in fields]
+
+        f.seek(2,1)
+
+        fields=apply(zip,fields)
+        columnIndex=list(fields[0]).index(colName)
+        seeklength1=sum(fields[2][:columnIndex-1])+1
+        readlength=fields[2][columnIndex]
+        seeklength2=sum(fields[2][columnIndex+1:])+1
+
+        self.fieldnames.append(fields[0][columnIndex])
+        self.fieldspecs.append((fields[1][columnIndex],fields[2][columnIndex],fields[3][columnIndex]))
+        for i in xrange(numrec):
+            f.seek(seeklength1,1)
+            self.records[i].append(f.read(readlength))
+            f.seek(seeklength2,1)
 
     def readFile(self,inName):
         """
@@ -321,3 +355,4 @@ if __name__ == "__main__":
     import doctest
     print
     doctest.testmod()
+
