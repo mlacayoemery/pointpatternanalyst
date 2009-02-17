@@ -35,6 +35,16 @@ def spec(valueString):
         except ValueError:
             return ("C",len(valueString),0)
 
+def specType(specvalue):
+    if specvalue[0]=="C":
+        return str
+    elif specvalue[0]=="N":
+        if specvalue[2]==0:
+            return int
+        else:
+            return float
+    return None
+
 def typelist(specList):
     """
     typelist(specList) accepts a list of specs and returns their Python types

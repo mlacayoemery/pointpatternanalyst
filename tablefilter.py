@@ -1,24 +1,50 @@
-import sys, arcgisscripting
+import sys
+import databasefile
 
-def Filter(inName,field,minimum,maximum,outName):
-    gp = arcgisscripting.create()
+def filterTable(inName,field,filtertype,equal,minimum,maximum,outName,retype):
+    d=databasefile.DatabaseFile([],[],[],inName)
+    fieldIndex=d.fieldnames.index(field)
+    fieldType=databasefile.specType(d.fieldspecs[fieldIndex])
 
-    if minimum !="#":
-        if maximum !="#":
-            expression="\""+field+"\" >= "+minimum+" AND "+"\""+field+"\" <= "+maximum
-        else:
-            expression="\""+field+"\" >= "+minimum
-    elif maximum !="#":
-        expression="\""+field+"\" <= "+maximum
+    if filtertype=="Values to Keep":
+        keep=True
     else:
-        expression=""
+        keep=False
 
-    gp.Select_analysis(inName, outName, expression)
+    if equal !="#":
+        for i in range(len(d.records)-1,-1,-1):
+            if fieldType(d.records[i][fieldIndex].strip())==fieldType(equal.strip()):
+                if not keep:
+                    d.records.pop(i)
+            elif keep:
+                d.records.pop(i)                    
+    if minimum !="#":
+        for i in range(len(d.records)-1,-1,-1):
+            if fieldType(d.records[i][fieldIndex].strip())<fieldType(minimum.strip()):
+                if not keep:
+                    d.records.pop(i)
+            elif keep:
+                d.records.pop(i)
+    if maximum !="#":
+        for i in range(len(d.records)-1,-1,-1):
+            if fieldType(d.records[i][fieldIndex].strip())>fieldType(maximum.strip()):
+                if not keep:
+                    d.records.pop(i)
+            elif keep:
+                d.records.pop(i)
+
+    if retype=="true":
+        d.refreshSpecs()
+        
+    d.writeFile(outName)                
 
 if __name__=="__main__":
     inName=sys.argv[1]
     field=sys.argv[2]
-    minimum=sys.argv[3]
-    maximum=sys.argv[4]
-    outName=sys.argv[5]
-    Filter(inName,field,minimum,maximum,outName)
+    filtertype=sys.argv[3]
+    equal=sys.argv[4]
+    minimum=sys.argv[5]
+    maximum=sys.argv[6]
+    outName=sys.argv[7]
+    retype=sys.argv[8]
+    filterTable(inName,field,filtertype,equal,minimum,maximum,outName,retype)
