@@ -1,6 +1,6 @@
 import sys, databasefile
 
-def animeyeParse(inName,outName):
+def animeyeParse(inName,outName,dynamicSpecs):
     pairColumnIndex=8
     #read in file, remove header, strip and split lines
     inFile=open(inName)
@@ -30,10 +30,16 @@ def animeyeParse(inName,outName):
     #return header,lines
             
     d=databasefile.DatabaseFile(header,None,lines)
-    d.refreshSpecs()
+
+    if dynamicSpecs=="true":
+        d.dynamicSpecs()
+    else:
+        d.staticSpecs()
+        
     d.writeFile(outName)    
     
 if __name__=="__main__":
     inName=sys.argv[1]
     outName=sys.argv[2]
-    animeyeParse(inName,outName)
+    dynamicSpecs=sys.argv[3]
+    animeyeParse(inName,outName,dynamicSpecs)

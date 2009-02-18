@@ -116,6 +116,17 @@ class DatabaseFile:
         else:
             self.readFile(dbffile)
 
+    def staticSpecs(self):
+        """
+        staticSpecs sets the current fieldspecs to all be strings of  the minimum width supporting the current data.
+        """
+        self.fieldspecs=[("C",w,0) for w in map(max,apply(zip,[map(len,l) for l in self.records]))]
+
+    def dynamicSpecs(self):
+        """
+        """
+        self.refreshSpecs()
+
     def refreshSpecs(self):
         """
         >>> d=DatabaseFile(["Int","Float","String"],[("N",5,0),("N",5,3),("C",5,0)],[[12345,12.45,"12345"]])
