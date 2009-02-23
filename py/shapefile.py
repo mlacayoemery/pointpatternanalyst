@@ -308,13 +308,13 @@ class Shapefile:
         outShp=open(outName+".shp",'wb')
         outShx=open(outName+".shx",'wb')
         outDbf=open(outName+".dbf",'wb')
-        self.write(outShp,outShx,outDbf)
+        self.table.write(outDbf)
+        outDbf.close()
+        self.write(outShp,outShx)
         outShp.close()
         outShx.close()
-        outDbf.close()
 
-    def write(self,shp,shx,dbf):
-        self.table.write(dbf)
+    def write(self,shp,shx):
         
         #shp file header
         #byte 0, File Code

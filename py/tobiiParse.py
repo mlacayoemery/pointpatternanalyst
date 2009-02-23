@@ -1,17 +1,16 @@
 import sys
 import databasefile
 
-def tobiiParse(inName,outName,dynamicSpecs):
+def tobiiParse(inName,outName,dynamicSpecs=False):
     headerLength=24
     #read in file, remove header, strip and split lines
-    inFile=open(inName)
-    lines=inFile.readlines()[headerLength:]
+    inFile=open(inName,'r')
+    lines=[l.replace("\t\n","\n").split("\t") for l in inFile.readlines()[headerLength:]]
     inFile.close()
-    header=lines.pop(0).strip().split("\t")
-    lines=[l.split("\t") for l in lines]
-            
+    header=lines.pop(0)
+    
     d=databasefile.DatabaseFile(header,None,lines)
-    if dynamicSpecs=="true":
+    if dynamicSpecs:
         d.dynamicSpecs()
     else:
         d.staticSpecs()
@@ -20,5 +19,8 @@ def tobiiParse(inName,outName,dynamicSpecs):
 if __name__=="__main__":
     inName=sys.argv[1]
     outName=sys.argv[2]
-    dynamicSpecs=sys.argv[3]
+    if sys.argv[3]=="true":
+        dynamicSpecs=True
+    else:
+        dynamicSpecs=False
     tobiiParse(inName,outName,dynamicSpecs)

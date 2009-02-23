@@ -5,6 +5,7 @@ import struct
 import datetime
 import decimal
 import itertools
+import string
 
 def spec(valueString):
     """
@@ -24,6 +25,23 @@ def spec(valueString):
     >>> spec("-1.0Q")
     ('C', 5, 0)
     """
+##    number=False
+##    decimal=False
+##    negative=False
+##    for c in valueString.strip():
+##        if c in string.digits:
+##            if not number:
+##                number=True
+##        elif c == "." and not decimal:
+##            decimal=True
+##        elif c=="-" and not negative:
+##            negative=True
+##        else:
+##            return ("C",len(valueString),0)
+##    if decimal:
+##        return ("N",len(valueString),len(valueString)-valueString.rfind("."))
+##    else:
+##        return ("N",len(valueString),0)
     valueString=str(valueString)
     try:
         int(valueString)
@@ -216,6 +234,8 @@ class DatabaseFile:
         self.fieldnames.append(fields[0][columnIndex])
         self.fieldspecs.append((fields[1][columnIndex],fields[2][columnIndex],fields[3][columnIndex]))
         for i in xrange(numrec):
+            if i > len(self.records)-1:
+                self.records.append([])
             f.seek(seeklength1,1)
             self.records[i].append(f.read(readlength))
             f.seek(seeklength2,1)
