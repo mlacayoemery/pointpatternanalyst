@@ -1,4 +1,3 @@
-import sys
 from ..shp import databasefile
 
 headerLength=24

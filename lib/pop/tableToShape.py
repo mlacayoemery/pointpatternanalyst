@@ -1,8 +1,7 @@
-import sys
-import shapefile
-import databasefile
+from ..shp import shapefile
+from ..shp import databasefile
 
-def TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventString,changeTypes):
+def TableToShape(inName,xField,yField,outName,quadrant,shape,changeTypes):
     #read in data table
     inFile=databasefile.DatabaseFile([],[],[])
     inFile.readFile(inName)
@@ -11,14 +10,14 @@ def TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventStr
     xIndex=inFile.fieldnames.index(xField)
     yIndex=inFile.fieldnames.index(yField)
               
-    #filter out rows that match the criteria
-    if eventField!="#":
-        eventIndex=inFile.fieldnames.index(eventField)
-        if eventString=="#":
-            eventString=""
-        for i in range(len(inFile.records)-1,-1,-1):
-            if inFile.records[i][eventIndex].strip()!=eventString:
-                inFile.records.pop(i)
+##    #filter out rows that match the criteria
+##    if eventField!="#":
+##        eventIndex=inFile.fieldnames.index(eventField)
+##        if eventString=="#":
+##            eventString=""
+##        for i in range(len(inFile.records)-1,-1,-1):
+##            if inFile.records[i][eventIndex].strip()!=eventString:
+##                inFile.records.pop(i)
 
     if changeTypes:
         inFile.refreshSpecs()
@@ -58,18 +57,3 @@ def TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventStr
 
     s.writeFile(outName[:outName.rfind(".")])
     
-if __name__ == "__main__":
-    inName=sys.argv[1]
-    xField=sys.argv[2]
-    yField=sys.argv[3]
-    outName=sys.argv[4]
-    quadrant=sys.argv[5]
-    shape=sys.argv[6]
-    eventField=sys.argv[7]
-    eventString=sys.argv[8]
-    if sys.argv[9]=="true":
-        changeTypes=True
-    else:
-        changeTypes=False
-        
-    TableToShape(inName,xField,yField,outName,quadrant,shape,eventField,eventString,changeTypes=True)
