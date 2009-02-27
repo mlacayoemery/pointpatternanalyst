@@ -3,10 +3,10 @@ from ..shp import databasefile
 
 headerLength=24
 
-def tobiiParseFile(inName,outName,dynamicSpecs=False):
-    tobiiParse(open(inName,'r'),open(outName,'wb'),dynamicSpecs)
+def tobiiParse(inName,outName,dynamicSpecs=False):
+    tobiiParseFile(open(inName,'r'),open(outName,'wb'),dynamicSpecs)
 
-def tobiiParse(inFile,outFile,dynamicSpecs=False):
+def tobiiParseFile(inFile,outFile,dynamicSpecs=False):
     #read in file, remove header, strip and split lines
     lines=[l.replace("\t\n","\n").split("\t") for l in inFile.readlines()[headerLength:]]
     inFile.close()

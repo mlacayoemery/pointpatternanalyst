@@ -8,4 +8,4 @@ if __name__=="__main__":
         dynamicSpecs=True
     else:
         dynamicSpecs=False
-    lib.pop.tobiiParse.tobiiParseFile(inName,outName,dynamicSpecs)
+    lib.pop.tobiiParse.tobiiParse(inName,outName,dynamicSpecs)
