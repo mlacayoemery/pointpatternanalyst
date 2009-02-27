@@ -1,5 +1,5 @@
 import sys
-import ../shp/databasefile
+from .shp import databasefile
 
 headerLength=24
 
