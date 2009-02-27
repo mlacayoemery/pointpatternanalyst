@@ -1,13 +1,16 @@
-import sys, databasefile
+from ..shp import databasefile
+
+pairColumnIndex=8
 
 def animeyeParse(inName,outName,dynamicSpecs):
-    pairColumnIndex=8
+    animeyeParseFile(open(inName),open(outName,'wb'),dynamicSpecs)
+
+def animeyeParseFile(inFile,outFile,dynamicSpecs):
     #read in file, remove header, strip and split lines
-    inFile=open(inName)
     header=inFile.readline().split("\t")
     #get labels for pair columns and remove from header
     labelA,labelB=header.pop(pairColumnIndex).strip().strip("(").strip(")").split(",")
-    #remove excess spacing from cells, and create row
+    #retove excess spacing from cells, and create row
     lines=[l.replace(" ","").strip().split("\t") for l in inFile.readlines()]
     inFile.close()
 
@@ -36,10 +39,4 @@ def animeyeParse(inName,outName,dynamicSpecs):
     else:
         d.staticSpecs()
         
-    d.writeFile(outName)    
-    
-if __name__=="__main__":
-    inName=sys.argv[1]
-    outName=sys.argv[2]
-    dynamicSpecs=sys.argv[3]
-    animeyeParse(inName,outName,dynamicSpecs)
+    d.write(outFile)
