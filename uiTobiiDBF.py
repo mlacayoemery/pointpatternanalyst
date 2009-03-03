@@ -12,7 +12,7 @@ Sara Fabrikant, University of Z\xfcrich, project collaborator
 Fulbright Program, funding agency
 """
 import sys
-import lib.pop.tobiiParse
+import lib.pop.tobiiDBF
 
 if __name__=="__main__":
     inName=sys.argv[1]
@@ -21,4 +21,4 @@ if __name__=="__main__":
         dynamicSpecs=True
     else:
         dynamicSpecs=False
-    lib.pop.tobiiParse.tobiiParse(inName,outName,dynamicSpecs)
+    lib.pop.tobiiDBF.tobiiParse(inName,outName,dynamicSpecs)
