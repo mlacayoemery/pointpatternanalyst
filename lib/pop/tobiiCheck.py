@@ -1,23 +1,42 @@
-import sys, string
+import string
+import time
 
-def tobiiCheck(inName,outName):
+def tobiiCheck(inName,outReport,outName,verbose=True):
     inFile=open(inName)
-    outFile=open(outName,'w')
-    for i in range(24):
-        outFile.write(inFile.readline())
-    header=inFile.readline().strip().split("\t")
-    print header
-    #translate the header to be character compliant
-    charmap=string.maketrans(string.punctuation+string.whitespace,"_"*39)
-    header=[f.translate(charmap) for f in header]
+    report=open(outReport,'w')
 
-    outFile.write("\t".join(header)+"\n")
-    outFile.write(inFile.read().strip())
+    report.write("POP Analyst Tobii TSV file check report")
+    if verbose:
+        report.write("\n"+str(time.ctime(time.time()))+"\n\n")
+        report.write("This check was performed on: \n"+inName+"\n")
+        if outName!=None:
+            report.write("A corrected file was written to: \n"+outName+"\n")
+    else:
+        report.write("\n\n")
+
+    if outName != None:
+        outFile=open(outName,'w')        
+        for i in range(24):
+            outFile.write(inFile.readline())
+    else:
+        for i in range(24):
+            inFile.readline()
+    header=inFile.readline().strip().split("\t")
+    #translate the header to be character compliant
+    charmap=string.maketrans(string.punctuation+string.whitespace,
+                             "_"*(len(string.punctuation)+len(string.whitespace)))
+    correctedHeader=[f.translate(charmap) for f in header]
+    if header!=correctedHeader:
+        report.write("\nThe column header is not compliant.")
+        if verbose:
+            report.write("\nThe column header is: "+str(header))
+            report.write("\nThe correct header is: "+str(correctedHeader))
+    else:
+        report.write("\nThe column header is compliant.")
+
+    if outName != None:
+        outFile.write("\t".join(correctedHeader)+"\n")
+        outFile.write(inFile.read())
+        outFile.close()
 
     inFile.close()
-    outFile.close()
-
-if __name__=="__main__":
-    inName=sys.argv[1]
-    outName=sys.argv[2]
-    tobiiCheck(inName,outName)
