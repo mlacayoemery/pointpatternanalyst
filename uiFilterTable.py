@@ -1,5 +1,5 @@
 import sys
-import lib.pop.tablefilter
+import lib.shp.dbfFilter
 
 if __name__=="__main__":
     inName=sys.argv[1]
@@ -16,4 +16,4 @@ if __name__=="__main__":
         retype=True
     else:
         retype=False
-    lib.pop.tablefilter.filterTable(inName,outName,field,keep,equal,minimum,maximum,retype)
+    lib.shp.dbfFilter.filterTable(inName,outName,field,keep,equal,minimum,maximum,retype)
