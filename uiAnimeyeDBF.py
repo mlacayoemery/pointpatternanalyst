@@ -14,10 +14,10 @@ Sara Fabrikant, University of Z\xfcrich, project collaborator
 Fulbright Program, funding agency
 """
 import sys
-import lib.pop.animeyeParse
+import lib.pop.animeyeDBF
 
 if __name__=="__main__":
     inName=sys.argv[1]
     outName=sys.argv[2]
     dynamicSpecs=sys.argv[3]
-    lib.pop.animeyeParse.animeyeParse(inName,outName,dynamicSpecs)
+    lib.pop.animeyeDBF.animeyeParse(inName,outName,dynamicSpecs)
