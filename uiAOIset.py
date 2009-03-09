@@ -26,5 +26,13 @@ if __name__=="__main__":
     length=int(sys.argv[5])
     valueTypes=["manual","automatic"]
     value=valueTypes.index(sys.argv[6])
-
-    lib.pop.AOIset.AOIsetFile(inName,outName,fieldName,label,length,value)
+    fieldX=None
+    fieldY=None
+    geoType=0
+    if len(sys.argv)==10:
+        fieldX=sys.argv[7]
+        fieldY=sys.argv[8]
+        geoTypes=["bounding box"]
+        geoType=geoTypes.index(sys.argv[9])
+        
+    lib.pop.AOIset.AOIsetFile(inName,outName,fieldName,label,length,value,fieldX,fieldY,geoType)
