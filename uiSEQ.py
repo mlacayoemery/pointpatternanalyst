@@ -13,9 +13,14 @@ import lib.pop.SEQ
 
 if __name__=="__main__":
     inName=sys.argv[1]
-    separateField=sys.argv[2]
+    if sys.argv[2]=="#":
+        separateField=None
+    else:
+        separateField=sys.argv[2]
     if sys.argv[3]=="OID":
-        orderByField="#"
+        orderByField=None
+    elif sys.argv[3]=="#":
+        orderByField=None
     else:
         orderByField=sys.argv[3]
     aoiField=sys.argv[4]

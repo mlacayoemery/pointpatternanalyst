@@ -1,6 +1,7 @@
 from ..shp import databasefile
+import math
 
-def Sequence(inName,aoiField,outName,format,userField="#",timeField="#",aoiTable=None,aoiCodeField=None,aoiLabelField=None):
+def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,aoiTable=None,aoiCodeField=None,aoiLabelField=None):
     """
     Sequence goes through a shapefile table and creates a sequence by appending the values in a cloumn.
     An user id field and a time field can be provided.
@@ -27,85 +28,53 @@ def Sequence(inName,aoiField,outName,format,userField="#",timeField="#",aoiTable
         for row in d:
             row[aoiFieldIndex]=trans[row[aoiFieldIndex].strip()]
 
-    #rotate data table
-    records=apply(zip,d.records)
-
-    if userField =="#":
-        #if no user field or time field specified
-        if timeField=="#":
-            #data contains single sequence in order in AOI column, just append all values
-            records=[["".join(map(str,apply(zip,d.records)[aoiFieldIndex]))]]
-
-        #if only time field specified
-        else:
-            #data contains single sequqence, but needs order by time field
-            #join AOI column with time column, sort and append all values
-            timeFieldIndex=d.fieldnames.index(timeField)
-            records=zip(records[timeFieldIndex],records[aoiFieldIndex])
-            records.sort()
-            records=[["".join(map(str,apply(zip,records)[1]))]]
-
-    #if only a user field specified
-    elif timeField=="#":
-        #user sequences, no time field
-        fieldnames=[userField]+fieldnames
-        userFieldIndex=d.index(userField)
-        users=set(records[userFieldIndex])
-        records=dict(zip(users,[""]*len(users)))
-        for row in d:
-            records[row[userFieldIndex]]+=str(row[aoiFieldIndex])
-        recordKeys=records.keys()
-        recordKeys.sort()
-        records=zip(map(str,recordKeys),map(records.get,recordKeys))
-
-    #if both a user field and time field specified
+    seq={}
+    if userField==None:
+        userIndex=None
     else:
-        #user sequences and time field
-        #add user id field name to field names and get data index and create user set
-        fieldnames=[userField]+fieldnames
-        userFieldIndex=d.fieldnames.index(userField)
-        users=list(set(records[userFieldIndex]))
-        users.sort()
+        userIndex=d.index(userField)
+    if timeField==None:
+        timeIndex=None
+    else:
+        timeIndex=None
+    for row in d:
+        if userIndex==None:
+            user=1
+            if not seq.has_key(user):
+                seq[user]={}
+        else:
+            user=row[userIndex]
+            if not seq.has_key(user):
+                seq[user]={}
+                
+        if timeIndex==None:
+            t=len(seq[user])
+        else:
+            t=row[timeIndex]
 
-        #setup variables to store records and get time field index
-        records=[]
-        timeFieldIndex=d.fieldnames.index(timeField)
-        recordsDict=dict(zip(users,[{}]*len(users)))
+        seq[user][t]=row[aoiFieldIndex]            
 
-        #loop over each record in the data table and construct a dictioanry using the user and time for keys
-        for r in d.records:
-            recordsDict[r[userFieldIndex]][r[timeFieldIndex]]=r[aoiFieldIndex]
+    userKeys=seq.keys()
+    userKeys.sort()
+    records=[]
+    for u in userKeys:
+        record=[u,""]
+        timeKeys=seq[u].keys()
+        timeKeys.sort()
+        for t in timeKeys:
+            record[1]=record[1]+seq[u][t]
+        records.append(record)
 
-        #loop over each user and create sequence
-        for k in users:
-            #get list of times for user and setup variable for sequence
-            times=recordsDict[k].keys()
-            times.sort()
-            line=[]
-
-            #loop over times for user and create sequence            
-            for t in times:
-                line.append(recordsDict[k][t])
-
-            #append user id with sequence to data table                
-            records.append([k,"".join(line)])
-
-    if format=="Comma Separated Values":
-        outFile=open(outName,'w')
-        #join all cells in rows by commas
-        #add field names to begining of records table
-        #join all rows by end or line characters
-        outFile.write('\n'.join([",".join(fieldnames)]+map(",".join,records)))
-        outFile.close()
-
-    elif format=="Clustal G":
+    print records
+        
+    if format=="Clustal G":
         lineWidth=72
         outFile=open(outName,'w')
         #write user id followed by rows of the sequence of no more than lineWidth characters.
         for r in records:
-            outFile.write("> "+r[0]+"\r\n")
+            outFile.write("> "+r[0]+" "+str(len(r[1]))+"\r\n")
             temp=r[1]
-            for i in range(int(round(float(len(temp)/lineWidth)))):
+            for i in range(int(math.ceil(float(len(temp))/lineWidth))):
                 outFile.write(temp[:lineWidth]+"\r\n")
                 temp=temp[lineWidth:]
         outFile.close()
