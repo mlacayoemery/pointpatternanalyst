@@ -1,13 +1,12 @@
-import sys, databasefile
+from ..shp import databasefile
 
-def Sequence(inName,aoiField,outName,format,userField="#",timeField="#"):
+def Sequence(inName,aoiField,outName,format,userField="#",timeField="#",aoiTable=None,aoiCodeField=None,aoiLabelField=None):
     """
     Sequence goes through a shapefile table and creates a sequence by appending the values in a cloumn.
     An user id field and a time field can be provided.
     """
     #read in data
-    d=databasefile.DatabaseFile([],[],[])
-    d.readFile(inName[:inName.rfind(".")]+".dbf")
+    d=databasefile.DatabaseFile([],[],[],inName)
 
     #setup variables for sequence
     fieldnames=[]
@@ -17,6 +16,16 @@ def Sequence(inName,aoiField,outName,format,userField="#",timeField="#"):
     #add AOI field name to field name list and get index
     fieldnames.append(aoiField)
     aoiFieldIndex=d.fieldnames.index(aoiField)
+
+    if aoiTable!=None:
+        aoi=databasefile.DatabaseFile([],[],[],aoiTable)
+        codeIndex=aoi.fieldnames.index(aoiCodeField)
+        labelIndex=aoi.fieldnames.index(aoiLabelField)
+        trans={}
+        for row in aoi:
+            trans[row[labelIndex].strip()]=row[codeIndex]
+        for row in d:
+            row[aoiFieldIndex]=trans[row[aoiFieldIndex].strip()]
 
     #rotate data table
     records=apply(zip,d.records)
@@ -40,12 +49,14 @@ def Sequence(inName,aoiField,outName,format,userField="#",timeField="#"):
     elif timeField=="#":
         #user sequences, no time field
         fieldnames=[userField]+fieldnames
-        userFieldIndex=d.fieldnames.index(userField)
+        userFieldIndex=d.index(userField)
         users=set(records[userFieldIndex])
         records=dict(zip(users,[""]*len(users)))
-        for r in d.records:
-            records[r[userFieldIndex]]+=str(r[aoiFieldIndex])
-        records=zip(map(str,records.keys()),map(records.get,records.keys()))
+        for row in d:
+            records[row[userFieldIndex]]+=str(row[aoiFieldIndex])
+        recordKeys=records.keys()
+        recordKeys.sort()
+        records=zip(map(str,recordKeys),map(records.get,recordKeys))
 
     #if both a user field and time field specified
     else:
