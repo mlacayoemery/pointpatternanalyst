@@ -4,7 +4,7 @@ from ..shp import geometry
 import string
 import math
 
-def AOIsetFile(inName,outName,fieldName,label,length,value,fieldX=None,fieldY=None,geoType=0):
+def AOIsetFile(inName,outName,fieldName,label,length,value,fieldX=None,fieldY=None,geoType=0,xScale=1,yScale=1):
     """
     AOIsetFile reads in a DBF and pass it to AOIset with a field index
     """
@@ -26,7 +26,7 @@ def AOIsetFile(inName,outName,fieldName,label,length,value,fieldX=None,fieldY=No
         aoiDBF.writeFile(outName)
     else:
         s=shapefile.Shapefile(5)
-        geo=AOIsetGeo(AOIs,dbf,fieldIndex,dbf.index(fieldX),dbf.index(fieldY),geoType)
+        geo=AOIsetGeo(AOIs,dbf,fieldIndex,dbf.index(fieldX),dbf.index(fieldY),geoType,xScale,yScale)
         for aoi in AOIs:
             s.add(geometry.closedSet(geometry.boundingBoxCoordinates(geo[aoi])))
         s.table.extend(aoiDBF)
@@ -71,15 +71,15 @@ def smartCodes(AOIs,length):
             if codes.has_key(code[:length]):
                 pass
 
-def AOIsetGeo(AOIset,dbf,aoiIndex,xIndex,yIndex,geoType):
+def AOIsetGeo(AOIset,dbf,aoiIndex,xIndex,yIndex,geoType,xScale,yScale):
     geo=dict(zip(AOIset,[[]]*len(AOIset)))
     
     if geoType==0:
         for row in dbf:
             if len(geo[row[aoiIndex]])==0:
-                geo[row[aoiIndex]]=geometry.boundingBox(float(row[xIndex]),float(row[xIndex]),
-                                                         float(row[yIndex]),float(row[yIndex]))
+                geo[row[aoiIndex]]=geometry.boundingBox(float(row[xIndex])*xScale,float(row[xIndex])*xScale,
+                                                         float(row[yIndex])*yScale,float(row[yIndex])*yScale)
             else:
-                geo[row[aoiIndex]]=geometry.extendBoundingBox(geo[row[aoiIndex]],float(row[xIndex]),
-                                                                float(row[yIndex]))
+                geo[row[aoiIndex]]=geometry.extendBoundingBox(geo[row[aoiIndex]],float(row[xIndex])*xScale,
+                                                                float(row[yIndex])*yScale)
     return geo

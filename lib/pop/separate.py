@@ -1,11 +1,14 @@
+import os
 from ..shp import databasefile
 
 def separateFile(dbfName,fieldName,folder,stem,namingScheme):
     dbf=databasefile.DatabaseFile([],[],[],dbfName)
     fieldIndex=dbf.index(fieldName)
     files=separate(dbf,fieldIndex,stem,namingScheme)
+    if not os.path.isdir(folder):
+        os.mkdir(folder)
     for name,dbf in files:
-        dbf.writeFile(folder+name+".dbf")
+        dbf.writeFile(folder+"\\"+name+".dbf")
 
 def separate(dbf,fieldIndex,stem,namingScheme):
     d={}

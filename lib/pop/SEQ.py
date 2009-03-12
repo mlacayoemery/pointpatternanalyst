@@ -64,15 +64,13 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,aoiTab
         for t in timeKeys:
             record[1]=record[1]+seq[u][t]
         records.append(record)
-
-    print records
         
     if format=="Clustal G":
         lineWidth=72
         outFile=open(outName,'w')
         #write user id followed by rows of the sequence of no more than lineWidth characters.
         for r in records:
-            outFile.write("> "+r[0]+" "+str(len(r[1]))+"\r\n")
+            outFile.write("> "+r[0]+"\r\n")
             temp=r[1]
             for i in range(int(math.ceil(float(len(temp))/lineWidth))):
                 outFile.write(temp[:lineWidth]+"\r\n")

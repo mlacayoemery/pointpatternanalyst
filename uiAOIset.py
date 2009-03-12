@@ -29,10 +29,14 @@ if __name__=="__main__":
     fieldX=None
     fieldY=None
     geoType=0
-    if len(sys.argv)==10:
+    xScale=1
+    yScale=1
+    if len(sys.argv)==11:
         fieldX=sys.argv[7]
         fieldY=sys.argv[8]
         geoTypes=["bounding box"]
         geoType=geoTypes.index(sys.argv[9])
+        scaleTypes=[(1,1),(-1,1),(-1,-1),(1,-1)]
+        xScale,yScale=scaleTypes[int(sys.argv[10])-1]
         
-    lib.pop.AOIset.AOIsetFile(inName,outName,fieldName,label,length,value,fieldX,fieldY,geoType)
+    lib.pop.AOIset.AOIsetFile(inName,outName,fieldName,label,length,value,fieldX,fieldY,geoType,xScale,yScale)
