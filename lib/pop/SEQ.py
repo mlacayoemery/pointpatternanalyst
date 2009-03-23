@@ -32,6 +32,7 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,aoiTab
     if userField==None:
         userIndex=None
     else:
+        print d.fieldnames
         userIndex=d.index(userField)
     if timeField==None:
         timeIndex=None
@@ -65,12 +66,12 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,aoiTab
             record[1]=record[1]+seq[u][t]
         records.append(record)
         
-    if format=="Clustal G":
+    if format=="Clustal G" or format==None:
         lineWidth=72
         outFile=open(outName,'w')
         #write user id followed by rows of the sequence of no more than lineWidth characters.
         for r in records:
-            outFile.write("> "+r[0]+"\r\n")
+            outFile.write("> "+str(r[0])+"\r\n")
             temp=r[1]
             for i in range(int(math.ceil(float(len(temp))/lineWidth))):
                 outFile.write(temp[:lineWidth]+"\r\n")

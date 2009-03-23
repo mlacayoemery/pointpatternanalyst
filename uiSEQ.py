@@ -24,11 +24,11 @@ if __name__=="__main__":
     else:
         orderByField=sys.argv[3]
     aoiField=sys.argv[4]
-    scaleByField=sys.argv[5]
-    format=sys.argv[6]
-    outName=sys.argv[7]
-    aoiTable=sys.argv[8]
-    aoiCodeField=sys.argv[9]
-    aoiLabelField=sys.argv[10]
+    scaleByField=None
+    format=None
+    outName=sys.argv[5]
+    aoiTable=sys.argv[6]
+    aoiCodeField=sys.argv[7]
+    aoiLabelField=sys.argv[8]
     
     lib.pop.SEQ.Sequence(inName,aoiField,outName,format,separateField,orderByField,aoiTable,aoiCodeField,aoiLabelField)

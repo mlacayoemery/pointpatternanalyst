@@ -1,0 +1,66 @@
+User Manual
+
+Point Pattern Analyst 1.0
+
+Support
+Martin Lacayo-Emery
+voicemail: +1 775 599 55 81
+Email: positrons@gmail.com
+
+TOC
+
+Introduction
+Point Pattern (PoP) Analyst is a library of functions and classes created to make the analysis and visualization of point pattern data useable in a variety of other applications, particularly geographic information systems and sequence analysis programs.
+
+Application Areas
+PoP Analyst is useful for converting files ands coding data.
+
+Install and Update
+There are several options for installing and updating PoP Analyst. The prefeered method is to download the latest realease from http://pointpatternanalyst.googlecode.com. The download is available on the download page, which can be reached by click on the download tab. The avaiable downloads are compressed into ZIP format and must be unzipped before using, but require no additional setup. updating a download of SOM Analyst only requires downloading the latest release and unzipping it to the same folder as the older release, overwriting the old files.
+
+The other option for downloading PoP Analyst is to use a SVN client to retrieve the repositroy from http://pointpatternanalyst.googlecode.com/svn/trunk/. (For more information on SVN see the appendix.) Unlike the ZIP of PoP Analyst, the PoP Analyst svn repositry no longer includes the shapefile classes needed, which must also be downloaded and is available from http://shapefile.googlecode.com. Updating PoP Analyst can be preformed by either calling the SVN update command or downloading a patch if available from the download page. Note the SVN repository is where revisions to PoP Analyst are immediately avaialable, and as such maybe unstable.
+
+Intstallation instructions
+Python must be installed on the computer in order for PoP Analyst to work. If you do have Python go to http://www.python.org and download it and follow the instructions for installation.
+
+Direct Download
+This is the preferred method of installation.
+1.  Go to http://pointpatternanalyst.googlecode.com
+2.  Click on the Downloads tab
+3.  Select the desired release and download.
+4.  Unzip the download to the desired location. (Usually short names without spaces works best for folders).
+5.  Updates can be performed by repeating this process.
+
+SVN Client
+This method should only be chosen by developers and testers.
+1.  Create or choose a folder to checkout PoP Analyst to. (Usually short names without spaces works best for folders).
+2.  Checkout the repository at http://pointpatternanalyst.googlecode.com/svn/trunk/ to the desired folder.
+3.  The folder now contains PoP Analyst, but requires an additonal library.
+4.  The PoP Analyst folder contains a folder named lib, inside the lib folder create a folder called shp.
+5.  Checout the repository at http://shapefile.googlecode.com/svn/trunk/ to the folder called shp.
+6.  Updates can be performed by calling the SVN update function on both the PoP Analyst folder and the shp folder.
+
+Standalone GUI
+The standalone GUI for PoP Analyst requires an additonal library called WxPython, if you do not plan on using the standalone gui you do not need it.
+1.  Go to http://www.wxpython.org/
+2.  Select the download link and choose the appropriate version for your system.
+3.  Follow the installation instructions for your system.
+
+ArcGIS GUI
+The ArcGIS GUI was created with ArcGIS 9.3, for support using an earlier version of ArcGIS check the download area on the main site for a alternative toolbox file.
+1.  In ArcMap, from the Window menu select toolbox. 
+2.  Right click the toolbox area and click on Add Toolbox.
+3.  Browse to the PoP Analyst folder and select the toolbox file (.tbx), then click open.
+4.  Point Pattern Analyst Toolbox should now appear in the toolbox area. If desired right click the toolbox area and save the current setup.
+
+License
+PoP Analyst is released under the Less GNU Public License 3.0. See http://www.gnu.org for more details.
+
+Updates
+If you used the direct download installation method, repeat the installation process. If are using a SVN client see the instruction manual for your SVN client on how to perform a update. Remeber when using SVN you must update both the PoP Analyst folder and the shp folder contained in its lib folder.
+
+Data Processing
+
+Visualization
+
+
