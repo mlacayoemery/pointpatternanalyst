@@ -2,26 +2,36 @@ User Manual
 
 Point Pattern Analyst 1.0
 
-Support
+Written by Martin Lacayo-Emery
+
+For Support Contact
 Martin Lacayo-Emery
-voicemail: +1 775 599 55 81
+Voicemail: +1 775 599 55 81
 Email: positrons@gmail.com
 
 TOC
 
 Introduction
-Point Pattern (PoP) Analyst is a library of functions and classes created to make the analysis and visualization of point pattern data useable in a variety of other applications, particularly geographic information systems and sequence analysis programs.
+Point Pattern (PoP) Analyst is a library of functions and classes created to make the analysis and visualization of point pattern data usable in a variety of other 
+applications, particularly geographic information systems and sequence analysis programs.
 
 Application Areas
 PoP Analyst is useful for converting files ands coding data.
 
 Install and Update
-There are several options for installing and updating PoP Analyst. The prefeered method is to download the latest realease from http://pointpatternanalyst.googlecode.com. The download is available on the download page, which can be reached by click on the download tab. The avaiable downloads are compressed into ZIP format and must be unzipped before using, but require no additional setup. updating a download of SOM Analyst only requires downloading the latest release and unzipping it to the same folder as the older release, overwriting the old files.
+There are several options for installing and updating PoP Analyst. The preferred method is to download the latest release from http://pointpatternanalyst.googlecode.com. The 
+download is available on the download page, which can be reached by click on the download tab. The available downloads are compressed into ZIP format and must be unzipped before 
+using, but require no additional setup. updating a download of SOM Analyst only requires downloading the latest release and unzipping it to the same folder as the older release, 
+overwriting the old files.
 
-The other option for downloading PoP Analyst is to use a SVN client to retrieve the repositroy from http://pointpatternanalyst.googlecode.com/svn/trunk/. (For more information on SVN see the appendix.) Unlike the ZIP of PoP Analyst, the PoP Analyst svn repositry no longer includes the shapefile classes needed, which must also be downloaded and is available from http://shapefile.googlecode.com. Updating PoP Analyst can be preformed by either calling the SVN update command or downloading a patch if available from the download page. Note the SVN repository is where revisions to PoP Analyst are immediately avaialable, and as such maybe unstable.
+The other option for downloading PoP Analyst is to use a SVN client to retrieve the repository from http://pointpatternanalyst.googlecode.com/svn/trunk/. (For more information 
+on SVN see the appendix.) Unlike the ZIP of PoP Analyst, the PoP Analyst svn repository no longer includes the shapefile classes needed, which must also be downloaded and is 
+available from http://shapefile.googlecode.com. Updating PoP Analyst can be preformed by either calling the SVN update command or downloading a patch if available from the 
+download page. Note the SVN repository is where revisions to PoP Analyst are immediately available, and as such maybe unstable.
 
-Intstallation instructions
-Python must be installed on the computer in order for PoP Analyst to work. If you do have Python go to http://www.python.org and download it and follow the instructions for installation.
+Installation instructions
+Python must be installed on the computer in order for PoP Analyst to work. If you do have Python go to http://www.python.org and download it and follow the instructions for 
+installation.
 
 Direct Download
 This is the preferred method of installation.
@@ -35,13 +45,13 @@ SVN Client
 This method should only be chosen by developers and testers.
 1.  Create or choose a folder to checkout PoP Analyst to. (Usually short names without spaces works best for folders).
 2.  Checkout the repository at http://pointpatternanalyst.googlecode.com/svn/trunk/ to the desired folder.
-3.  The folder now contains PoP Analyst, but requires an additonal library.
+3.  The folder now contains PoP Analyst, but requires an additional library.
 4.  The PoP Analyst folder contains a folder named lib, inside the lib folder create a folder called shp.
-5.  Checout the repository at http://shapefile.googlecode.com/svn/trunk/ to the folder called shp.
+5.  Checkout the repository at http://shapefile.googlecode.com/svn/trunk/ to the folder called shp.
 6.  Updates can be performed by calling the SVN update function on both the PoP Analyst folder and the shp folder.
 
 Standalone GUI
-The standalone GUI for PoP Analyst requires an additonal library called WxPython, if you do not plan on using the standalone gui you do not need it.
+When available the standalone GUI for PoP Analyst will require an additional library called WxPython. If you do not plan on using the standalone GUI you do not need it.
 1.  Go to http://www.wxpython.org/
 2.  Select the download link and choose the appropriate version for your system.
 3.  Follow the installation instructions for your system.
@@ -57,10 +67,66 @@ License
 PoP Analyst is released under the Less GNU Public License 3.0. See http://www.gnu.org for more details.
 
 Updates
-If you used the direct download installation method, repeat the installation process. If are using a SVN client see the instruction manual for your SVN client on how to perform a update. Remeber when using SVN you must update both the PoP Analyst folder and the shp folder contained in its lib folder.
+If you used the direct download installation method, repeat the installation process. If are using a SVN client see the instruction manual for your SVN client on how to perform 
+a update. Remember when using SVN you must update both the PoP Analyst folder and the shp folder contained in its lib folder.
+
+Features
+PoP Analyst is a software library with an accompanying graphical user interface (GUI). This means that PoP Analyst is mainly a collection of functions that can be used for point 
+pattern analysis, however for ease of use these functions have been combined into common tasks that can be conveniently done using the GUI. The tasks supported in the GUI are 
+under development and are in pre-alpha, alpha, or beta development stages. Pre-alpha status means that it has not fully been defined or implemented. Alpha status means that it 
+has not been fully implemented or tested by the developer. Beta tools are fully implemented, but are still in a user testing stage. All tools are in a beta stage unless other 
+noted.
+
+
+File Formats
+The input file formats supported are the Tobii and Animeye data in tab separated values (TSV) format. The Animeye TSV format is a plain TSV format and begins with a column 
+header line, and is readably usable for other TSV data.
 
 Data Processing
+PoP Analyst contains the essential components for converting and processing all of the input file formats. Processing data files begins by validating their format and converting 
+them to the Xbase (DBF) file format. Once in the DBF format, data files can be filtered and split to remove and separate rows. In order to create a sequence from data a coding 
+scheme for the areas of interest must first be created. Coding scheme for areas of interest can be created automatically or manually using the area of interest tools. After a 
+coding scheme is created it can then be applied to data, which results in a sequence using the specified scheme.
 
-Visualization
+Data Validation
+Data validation ensures that the input data is compliant with the formats supported by PoP Analyst. All input formats have validation functions. These functions take the data 
+file as input and produce a text report confirming compliance or detailing non-compliance. Optionally validation can also produce a file with the most common issues corrected. 
+In the GUI these functions can be accessed using the Validate Animeye TSV and Validate Tobii TSV tools.
+
+Table Creation
+Table creation converts from the input formats to the Xbase (DBF) file format. The DBF format serves as a common basis on which all other functions operate. All input formats 
+have table creation functions. Optionally table creation can autodetect data types, which does not affect how data is stored, but can useful for some computation and 
+visualization tasks. In the GUI theses functions can be accessed using the Create DBF from Animeye TSV and Create DBF from Tobii TSV tools.
+
+Filtering
+Filtering DBFs allows the removal of rows from a single file. Removal of rows can be done by specifying the rows to keep or rows to remove using a single less than, equal, or 
+greater than rule. For strings, less than or greater than rules use alphanumeric order as a comparison. Filtering creates a new file from the input using the criterion, which 
+can also optionally have data type autodetected. In the GUI this function can be accessed using the Filter DBF by Variable tool.
+
+Splitting
+Splitting a DBF allows the separation of multiple rows in a single file to rows in multiple files. Separation can currently be done only using the criterion of unique values. 
+Splitting creates new files named with the values from the separation criterion in a specified folder, optionally preceded by the name of the input file. In the GUI this 
+function can be accessed using the Split DBF by Value tool.
 
 
+Coding Areas of Interest
+The areas of interest (AOIs) in a DBF can be listed multiple times and in order to code them consistently for the creation of sequences it is useful to first create a coding 
+scheme. In order to create a coding scheme it is necessary to first have a list of the unique AOIs. The AOI Set function creates a DBF for the coding scheme of AOIs. The DBF 
+contains a column for the fixed width code for an AOI and a column with the unique AOI names. The width of the codes is specified by the user and the code for the AOIs can be 
+generated automatically during scheme creation or entered manually by the user after the coding scheme table is created. In the GUI this function can be accessed using the Create 
+AOI Set DBF tool.
+
+Sequence Creation
+Sequence creation allows the creation of sequences from a DBF using an existing coding scheme. A single sequence can be created from a DBF or optionally multiple sequences can 
+be created if a column is selected for values on which to group the data. Additionally, a column can optionally be selected on which to sort the data otherwise it is assumed 
+that data is listed in order. In the GUI this function can be accessed using the Create Sequences from DBF tool.
+
+Geometry
+Geometry tools are still under development.
+
+Appendix
+
+Subversion (SVN)
+Subversion (SVN) is a version control system for source code. SVN stores the most recent source code for a project and the differences between the current version and all 
+previous versions. In such a way all versions of the source code can be obtained by reversing the differences in the current source code. Each time a change is made by the 
+developer a optional comment is recorded, which allows the tracking of developments and changes. 

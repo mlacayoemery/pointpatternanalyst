@@ -2,6 +2,11 @@ import string
 import time
 
 def tobiiCheck(inName,outReport,outName,verbose=True):
+    """
+    tobiiCheck checks a file for Tobii TSV compliance.
+    It skips past the 24 line file header and checks the column header for
+    punctuation and whitespace.
+    """
     inFile=open(inName)
     report=open(outReport,'w')
 
