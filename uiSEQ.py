@@ -23,12 +23,24 @@ if __name__=="__main__":
         orderByField=None
     else:
         orderByField=sys.argv[3]
-    aoiField=sys.argv[4]
-    scaleByField=None
-    format=None
-    outName=sys.argv[5]
-    aoiTable=sys.argv[6]
-    aoiCodeField=sys.argv[7]
-    aoiLabelField=sys.argv[8]
+    if sys.argv[4]=="#":
+        scaleByField=None
+    else:
+        scaleByField=sys.argv[4]
+    scaleUnit=float(sys.argv[5])
+    aoiField=sys.argv[6]
+    formatTypes=["Clustal G",
+                 "State-Sequence (STS)",
+                 "State-Permanence (SPS)",
+                 "Distinct-State-Sequence (DSS)",
+                 "Time-Stamped Event (TSE)",
+                 "Person-Peroid",
+                 "Shifted-Replicated-Squence (SRS)",
+                 "Xbase (DBF)"]
+    format=formatTypes.index(sys.argv[7])
+    outName=sys.argv[8]
+    aoiTable=sys.argv[9]
+    aoiCodeField=sys.argv[10]
+    aoiLabelField=sys.argv[11]
     
-    lib.pop.SEQ.Sequence(inName,aoiField,outName,format,separateField,orderByField,aoiTable,aoiCodeField,aoiLabelField)
+    lib.pop.SEQ.Sequence(inName,aoiField,outName,format,separateField,orderByField,scaleByField,scaleUnit,aoiTable,aoiCodeField,aoiLabelField)
