@@ -1,4 +1,7 @@
-from ..shp import databasefile
+import sys
+#add absolute path for shapefile library (relative to file import)
+sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
+import databasefile
 import math
 
 def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,scaleField=None,scaleUnit=1,aoiTable=None,aoiCodeField=None,aoiLabelField=None):

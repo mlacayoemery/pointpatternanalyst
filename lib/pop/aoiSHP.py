@@ -1,5 +1,8 @@
-from ..shp import shapefile
-from ..shp import databasefile
+import sys
+#add absolute path for shapefile library (relative to file import)
+sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
+import shapefile
+import databasefile
 
 def aoiShp(inName,outName):
     inFile=open(inName)
