@@ -8,7 +8,7 @@ if __name__=="__main__":
         dynamicSpecs=True
     else:
         dynamicSpecs=False
-    if convertsionType=="Tobii":
+    if conversionType=="Tobii":
         import lib.pop.tobiiDBF
         lib.pop.tobiiDBF.tobiiParse(inName,outName,dynamicSpecs)
     elif coversionType=="SensoMotoric":
