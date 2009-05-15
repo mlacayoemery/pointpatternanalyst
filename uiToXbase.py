@@ -11,7 +11,7 @@ if __name__=="__main__":
     if conversionType=="Tobii":
         import lib.pop.tobiiDBF
         lib.pop.tobiiDBF.tobiiParse(inName,outName,dynamicSpecs)
-    elif coversionType=="SensoMotoric":
+    elif conversionType=="SensoMotoric":
         import lib.pop.animeyeDBF
         lib.pop.animeyeDBF.animeyeParse(inName,outName,dynamicSpecs)
     else:

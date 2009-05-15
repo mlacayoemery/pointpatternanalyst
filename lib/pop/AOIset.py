@@ -16,12 +16,18 @@ def AOIsetFile(inName,outName,fieldName,label,length,value,fieldX=None,fieldY=No
     AOIs=list(AOIset(dbf,fieldIndex))
     AOIs.sort()
 
+    chars=string.ascii_lowercase
+    minimumLen=int(math.ceil(math.log(len(AOIs))/math.log(len(chars))))
+    if length<minimumLen:
+        #raise ValueError, "The minimum code length for your data is "+str(minimumLen)
+        length=minimumLen
+
     fieldNames=[label,fieldName]
     fieldSpecs=[('C',length,0),dbf.fieldspecs[fieldIndex]]
     if value==0:
         codes=[""]*len(AOIs)
     else:
-        codes=uniqueCodes(len(AOIs),length)
+        codes=uniqueCodes(len(AOIs),length,chars)
     records=zip(codes,AOIs)
     aoiDBF=databasefile.DatabaseFile(fieldNames,fieldSpecs,records)
 
@@ -46,11 +52,7 @@ def AOIset(table,columnIndex):
 
 
 
-def uniqueCodes(AOIs,length):
-    chars=string.ascii_lowercase
-    minimumLen=int(math.ceil(math.log(AOIs)/math.log(len(chars))))
-    if length<minimumLen:
-        raise ValueError, "The minimum code length for your data is "+str(minimumLen)
+def uniqueCodes(AOIs,length,chars):
     codes=[""]*AOIs
     digits=map(len(chars).__pow__,range(length-1,0,-1))
     for i,id in enumerate(range(AOIs)):

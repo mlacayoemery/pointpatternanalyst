@@ -21,11 +21,17 @@ import lib.pop.AOIset
 if __name__=="__main__":
     inName=sys.argv[1]
     fieldName=sys.argv[2]
-    outName=sys.argv[3]
-    label=sys.argv[4]
-    length=int(sys.argv[5])
+    outName=sys.argv[5]
+    label=sys.argv[3]
+    if sys.argv[4]=="automatic":
+        length=1
+    else:
+        length=int(sys.argv[4])
     valueTypes=["manual","automatic"]
-    value=valueTypes.index(sys.argv[6])
+    if sys.argv[6]=="#":
+        value=1
+    else:
+        value=valueTypes.index(sys.argv[6])
     fieldX=None
     fieldY=None
     geoType=0
