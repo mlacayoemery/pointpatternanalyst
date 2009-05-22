@@ -1,6 +1,6 @@
 import sys
 #add absolute path for shapefile library (relative to file import)
-sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
+sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")-3]+"shp")
 import databasefile
 import shapefile
 import geometry
@@ -77,11 +77,11 @@ def smartCodes(AOIs,length):
                 pass
 
 def AOIsetGeo(AOIset,dbf,aoiIndex,xIndex,yIndex,geoType,xScale,yScale):
-    geo=dict(zip(AOIset,[[]]*len(AOIset)))
+    geo=dict(zip(AOIset,[None]*len(AOIset)))
     
     if geoType==0:
         for row in dbf:
-            if len(geo[row[aoiIndex]])==0:
+            if geo[row[aoiIndex]]==None:
                 geo[row[aoiIndex]]=geometry.boundingBox(float(row[xIndex])*xScale,float(row[xIndex])*xScale,
                                                          float(row[yIndex])*yScale,float(row[yIndex])*yScale)
             else:
