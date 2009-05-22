@@ -80,6 +80,9 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,scaleF
             record[1].append(seq[u][t])
             record[2].append(t)
         records.append(record)
+
+    if len(records)==1:
+        records[0][0]=inName[inName.rfind("\\")+1:]
         
     if format==0:#"Clustal G"
         lineWidth=72

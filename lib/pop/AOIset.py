@@ -47,7 +47,7 @@ def AOIset(table,columnIndex):
     """
     setA=set([])
     for row in table:
-        setA.add(row[columnIndex])
+        setA.add(row[columnIndex].strip())
     return setA
 
 
