@@ -1,6 +1,6 @@
 import sys
 #add absolute path for shapefile library (relative to file import)
-sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")-3]+"shp")
+sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
 import databasefile
 import shapefile
 import geometry
