@@ -3,7 +3,7 @@ import os
 import arcgisscripting
 
 if __name__=="__main__":
-    gp = arcgisscripting.create(9.3)
+    gp = arcgisscripting.create()
 
     inFolder=sys.argv[1]
     conversionType=sys.argv[2]

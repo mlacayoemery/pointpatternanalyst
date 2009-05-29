@@ -24,7 +24,7 @@ import lib.pop.AOIset
 import lib.shp.databasefile
 
 if __name__=="__main__":
-    gp = arcgisscripting.create(9.3)
+    gp = arcgisscripting.create()
     inFolder=sys.argv[1]
     inName=sys.argv[2]
     fieldName=sys.argv[3]

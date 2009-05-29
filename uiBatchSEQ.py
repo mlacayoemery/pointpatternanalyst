@@ -14,7 +14,7 @@ import arcgisscripting
 import lib.pop.SEQ
 
 if __name__=="__main__":
-    gp = arcgisscripting.create(9.3)
+    gp = arcgisscripting.create()
 
     inFolder=sys.argv[1]
     inName=sys.argv[2]

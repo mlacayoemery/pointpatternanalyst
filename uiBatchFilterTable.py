@@ -4,7 +4,7 @@ import arcgisscripting
 import lib.shp.dbfFilter
 
 if __name__=="__main__":
-    gp = arcgisscripting.create(9.3)
+    gp = arcgisscripting.create()
     inFolder=sys.argv[1]
     inName=sys.argv[2]
     field=sys.argv[3]
