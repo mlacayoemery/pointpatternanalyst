@@ -72,10 +72,13 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,scaleF
     userKeys=seq.keys()
     userKeys.sort()
     records=[]
+    maxLen=0
     for u in userKeys:
         record=[u,[],[]]
         timeKeys=seq[u].keys()
         timeKeys.sort()
+        if len(timeKeys)>maxLen:
+            maxLen=len(timeKeys)
         for t in timeKeys:
             record[1].append(seq[u][t])
             record[2].append(t)
@@ -100,9 +103,10 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,scaleF
 
     elif format==1:#"State-Sequence (STS)"
         outFile=open(outName,'w')
-        outFile.write("Header should be addded here.")
+        outFile.write("Id,"+",".join(map(str,range(1,1+maxLen))))
         for r in records:
-            outFile.write("\n"+str(r[0]).strip()+" "+' '.join(apply(zip,r[1])[0]))
+            outFile.write("\n"+str(r[0]).strip()+","+','.join(apply(zip,r[1])[0]))
+        outFile.write("\n")
         outFile.close()
 
     elif format==2:#"State-Permanence (SPS)"
