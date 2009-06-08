@@ -1,4 +1,8 @@
-import sys, shapefile
+"""Creates an empty shapefile"""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
+
+import sys
+import lib.shp.shapefile
 
 def NewAOI(outName,shapeType):
     if shapeType=="point":

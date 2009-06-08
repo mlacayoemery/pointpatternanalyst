@@ -1,10 +1,16 @@
+"""The batch filter script"""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
+
 import sys
 import os
 import arcgisscripting
 import lib.shp.dbfFilter
 
 if __name__=="__main__":
+    #create geoprocessor
     gp = arcgisscripting.create()
+
+    #store parameters    
     inFolder=sys.argv[1]
     inName=sys.argv[2]
     field=sys.argv[3]
@@ -20,6 +26,8 @@ if __name__=="__main__":
         retype=True
     else:
         retype=False
+
+    #loop over each file in directory, perform filter        
     for name in os.listdir(inFolder):
         inName=inFolder+"\\"+name
         outName=outFolder+"\\"+name
