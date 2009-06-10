@@ -1,3 +1,6 @@
+"""Split DBFs into multiple fields."""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
+
 import os
 import sys
 #add absolute path for shapefile library (relative to file import)
@@ -8,6 +11,8 @@ def separateFile(dbfName,fieldName,folder,stem,namingScheme):
     dbf=databasefile.DatabaseFile([],[],[],dbfName)
     fieldIndex=dbf.index(fieldName)
     files=separate(dbf,fieldIndex,stem,namingScheme)
+
+    #make output directory if it does not exist
     if not os.path.isdir(folder):
         os.mkdir(folder)
     for name,dbf in files:

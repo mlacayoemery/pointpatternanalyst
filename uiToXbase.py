@@ -1,3 +1,5 @@
+"""The inteface script for parsing."""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 
 if __name__=="__main__":

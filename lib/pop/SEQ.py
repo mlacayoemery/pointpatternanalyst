@@ -1,3 +1,5 @@
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
+
 import sys
 #add absolute path for shapefile library (relative to file import)
 sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
@@ -69,6 +71,7 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,scaleF
 
         seq[user][t]=(row[aoiFieldIndex],scale)
 
+    #convert dictionary into table
     userKeys=seq.keys()
     userKeys.sort()
     records=[]
@@ -84,6 +87,7 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,scaleF
             record[2].append(t)
         records.append(record)
 
+    #give sequence file name if only one
     if len(records)==1:
         records[0][0]=inName[inName.rfind("\\")+1:]
         

@@ -1,3 +1,5 @@
+"""Creates a single polygon using the specified coordinates."""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 import lib.shp.shapefile
 

@@ -1,3 +1,5 @@
+"""Checks for Tobii Studio format complaince"""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import string
 import time
 
@@ -10,6 +12,7 @@ def tobiiCheck(inName,outReport,outName,verbose=True):
     inFile=open(inName)
     report=open(outReport,'w')
 
+    #write report header
     report.write("POP Analyst Tobii TSV file check report")
     if verbose:
         report.write("\n"+str(time.ctime(time.time()))+"\n\n")
@@ -27,6 +30,7 @@ def tobiiCheck(inName,outReport,outName,verbose=True):
         for i in range(24):
             inFile.readline()
     header=inFile.readline().strip().split("\t")
+
     #translate the header to be character compliant
     charmap=string.maketrans(string.punctuation+string.whitespace,
                              "_"*(len(string.punctuation)+len(string.whitespace)))

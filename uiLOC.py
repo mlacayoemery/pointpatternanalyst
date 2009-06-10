@@ -1,3 +1,5 @@
+"""Interface to the location file creation."""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 import lib.pop.LOC
 

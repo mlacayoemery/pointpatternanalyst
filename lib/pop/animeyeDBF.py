@@ -1,11 +1,15 @@
+"""The SensoMotoric parse script"""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 #add absolute path for shapefile library (relative to file import)
 sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
 import databasefile
 
+#the column that contains tuples
 pairColumnIndex=8
 
 def animeyeParse(inName,outName,dynamicSpecs):
+    #open the file and parse them
     animeyeParseFile(open(inName),open(outName,'wb'),dynamicSpecs)
 
 def animeyeParseFile(inFile,outFile,dynamicSpecs):

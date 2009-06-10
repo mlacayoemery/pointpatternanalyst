@@ -1,3 +1,5 @@
+"""Writes the coordinates to a World File"""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 
 def worldFile(inName,xScale,yScale,xRotation,yRotation,xTranslation,yTranslation):

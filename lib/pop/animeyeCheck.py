@@ -1,3 +1,6 @@
+"""Checks complaince with SensoMotoric format"""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
+
 import string
 import time
 
@@ -7,6 +10,7 @@ def animeyeCheck(inName,outReport,outName,verbose=True):
     if outName != None:
         outFile=open(outName,'w')
 
+    #write report header
     report.write("POP Analyst Animeye TSV file check report")
     if verbose:
         report.write("\n"+str(time.ctime(time.time()))+"\n\n")
@@ -16,6 +20,7 @@ def animeyeCheck(inName,outReport,outName,verbose=True):
     else:
         report.write("\n\n")        
 
+    #check for and fix unallowed characters
     header=inFile.readline().strip().split("\t")
     #translate the header to be character compliant
     charmap=string.maketrans(string.punctuation+string.whitespace,
@@ -29,6 +34,7 @@ def animeyeCheck(inName,outReport,outName,verbose=True):
     else:
         report.write("\nThe column header is compliant.")
 
+    #write out data if correcting file
     if outName != None:
         outFile.write("\t".join(correctedHeader)+"\n")
         outFile.write(inFile.read())

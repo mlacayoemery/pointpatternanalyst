@@ -1,3 +1,5 @@
+"""Parses the Tobii Studio"""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 #add absolute path for shapefile library (relative to file import)
 sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")

@@ -1,3 +1,5 @@
+"""Depereciated: Batch tobii parse file."""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 import os
 import tobiiParse

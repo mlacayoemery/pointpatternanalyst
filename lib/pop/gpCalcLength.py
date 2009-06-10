@@ -1,3 +1,5 @@
+"""Experiments with the geoprocesor field calculator."""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import arcgisscripting, sys
 
 def CalculateLength(inputFC,field):

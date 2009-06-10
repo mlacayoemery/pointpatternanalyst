@@ -1,3 +1,5 @@
+"""Generate random sequences"""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import random
 import string
 

@@ -1,3 +1,5 @@
+"""The AOI set creation script."""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 #add absolute path for shapefile library (relative to file import)
 sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
@@ -16,12 +18,14 @@ def AOIsetFile(inName,outName,fieldName,label,length,value,fieldX=None,fieldY=No
     AOIs=list(AOIset(dbf,fieldIndex))
     AOIs.sort()
 
+    #construct the alphabet and determine word length
     chars=string.ascii_lowercase
     minimumLen=int(math.ceil(math.log(len(AOIs))/math.log(len(chars))))
     if length<minimumLen:
         #raise ValueError, "The minimum code length for your data is "+str(minimumLen)
         length=minimumLen
 
+    #generate code column and codes
     fieldNames=[label,fieldName]
     fieldSpecs=[('C',length,0),dbf.fieldspecs[fieldIndex]]
     if value==0:
@@ -31,6 +35,7 @@ def AOIsetFile(inName,outName,fieldName,label,length,value,fieldX=None,fieldY=No
     records=zip(codes,AOIs)
     aoiDBF=databasefile.DatabaseFile(fieldNames,fieldSpecs,records)
 
+    #create geometry if specified
     if fieldX==None and fieldY==None:
         aoiDBF.writeFile(outName)
     else:
@@ -51,8 +56,10 @@ def AOIset(table,columnIndex):
     return setA
 
 
-
 def uniqueCodes(AOIs,length,chars):
+    """
+    Creates a list of unique words using of a fixed length using the alphabet
+    """
     codes=[""]*AOIs
     digits=map(len(chars).__pow__,range(length-1,0,-1))
     for i,id in enumerate(range(AOIs)):
@@ -63,12 +70,17 @@ def uniqueCodes(AOIs,length,chars):
     return [c.capitalize() for c in codes]        
 
 def smartCodes(AOIs,length):
+    """
+    Creates a list of unique words of a fixed length based on the AOI names
+    """
     codes={}
+    #create translation tables
     l1Char=string.punctuation+string.whitespace+string.digits
     l1=string.maketrans(l1char,"_"*len(l1char))
     l2Char="aeiou"
     l2=string.maketrans(l2char,"_"*len(l2char))
-    
+
+    #attempt to translate names to unique word    
     for a in AOIs:
         code=a.translate(l1).replace("_","")
         if codes.has_key(code[:length]):
@@ -77,6 +89,9 @@ def smartCodes(AOIs,length):
                 pass
 
 def AOIsetGeo(AOIset,dbf,aoiIndex,xIndex,yIndex,geoType,xScale,yScale):
+    """
+    Constructs geometry for AOIs
+    """
     geo=dict(zip(AOIset,[None]*len(AOIset)))
     
     if geoType==0:

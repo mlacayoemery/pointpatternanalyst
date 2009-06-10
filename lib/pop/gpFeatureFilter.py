@@ -1,3 +1,5 @@
+"""Experiments with the geoprocessor selection tool."""
+__author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys, arcgisscripting
 
 def Filter(inName,field,minimum,maximum,outName):

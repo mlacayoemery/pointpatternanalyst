@@ -1,16 +1,6 @@
-"""The user interface to the class tobiiParse.
-
-From ArcGIS use provided toolbox, or add script with parameter for input file, output dbf Table, and boolean.
-Calls tobiiParse with parameters, use boolean to decide to dynamically type.
-"""
+"""The user interface to the class tobiiParse."""
 __author__ = "Martin Lacayo-Emery <positrons@gmail.com>"
-__date__ = "01 March 2009"
 
-__version__ = "$Revision: 1 $"
-__credits__ = """Arzu \xc7\xf6ltekin, University of Z\xfcrich, project collaborator
-Sara Fabrikant, University of Z\xfcrich, project collaborator
-Fulbright Program, funding agency
-"""
 import sys
 import lib.pop.tobiiDBF
 
