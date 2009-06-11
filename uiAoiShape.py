@@ -5,7 +5,7 @@ import sys
 import lib.shp.shapefile
 import lib.shp.databasefile
 
-def aoiShp(inName,outName):
+def aoiShp(inName,outName,xoffset,yoffset):
     #use quadrant 4
     xScale=1
     yScale=-1
@@ -18,7 +18,7 @@ def aoiShp(inName,outName):
         row=[p.split(",") for p in l.strip().split("\t")]
         dbf.addRow(row.pop(0))
         #create polygon for AOI from coordinates
-        polygon=[(int(x)*xScale,int(y)*yScale) for x,y in row]
+        polygon=[((int(x)+xoffset)*xScale,(int(y)+yoffset)*yScale) for x,y in row]
         #close polygon and add to shapefile
         shp.add(polygon+[polygon[0]])
     #automatically detect field specs for AOI names
@@ -31,4 +31,6 @@ def aoiShp(inName,outName):
 if __name__=="__main__":
     inName=sys.argv[1]
     outName=sys.argv[2]
-    aoiShp(inName,outName)
+    xoffset=int(sys.argv[3])
+    yoffset=int(sys.argv[4])
+    aoiShp(inName,outName,xoffset,yoffset)

@@ -4,7 +4,7 @@ import sys
 
 def worldFile(inName,xScale,yScale,xRotation,yRotation,xTranslation,yTranslation):
     outFile=open(inName+"w","w")
-    outFile.write("\n".join((xScale,yScale,xRotation,yRotation,xTranslation,yTranslation)))
+    outFile.write("\n".join((xScale,xRotation,yRotation,yScale,xTranslation,yTranslation)))
     outFile.close()
 
 if __name__=="__main__":
