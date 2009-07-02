@@ -10,11 +10,15 @@ if __name__=="__main__":
         dynamicSpecs=True
     else:
         dynamicSpecs=False
+    if sys.argv[5]=="true":
+        multipleAOIs=True
+    else:
+        multipleAOIs=False
     if conversionType=="Tobii":
         import lib.pop.tobiiDBF
         lib.pop.tobiiDBF.tobiiParse(inName,outName,dynamicSpecs)
     elif conversionType=="SensoMotoric":
         import lib.pop.animeyeDBF
-        lib.pop.animeyeDBF.animeyeParse(inName,outName,dynamicSpecs)
+        lib.pop.animeyeDBF.animeyeParse(inName,outName,dynamicSpecs,multipleAOIs)
     else:
         raise ValueError, conversionType + " is not a defined format."
