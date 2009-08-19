@@ -75,18 +75,15 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,scaleF
     userKeys=seq.keys()
     userKeys.sort()
     records=[]
-    maxLen=0
     for u in userKeys:
         record=[u,[],[]]
         timeKeys=seq[u].keys()
         timeKeys.sort()
-        if len(timeKeys)>maxLen:
-            maxLen=len(timeKeys)
         for t in timeKeys:
             record[1].append(seq[u][t])
             record[2].append(t)
         records.append(record)
-
+            
     #give sequence file name if only one
     if len(records)==1:
         records[0][0]=inName[inName.rfind("\\")+1:]
@@ -106,10 +103,23 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,scaleF
         outFile.close()
 
     elif format==1:#"State-Sequence (STS)"
+        maxLen=0
+        for r in records:
+            temp=0
+            for aoi,scale in r[1]:
+                temp+=int(scale/scaleUnit)
+            if temp>maxLen:
+                maxLen=temp
+
         outFile=open(outName,'w')
         outFile.write("Id,"+",".join(map(str,range(1,1+maxLen))))
+
         for r in records:
-            outFile.write("\n"+str(r[0]).strip()+","+','.join(apply(zip,r[1])[0]))
+            temp=[]
+            for aoi,scale in r[1]:
+                temp=temp+([aoi]*int(scale/scaleUnit))
+            outFile.write("\n"+str(r[0]).strip()+","+','.join(temp))
+
         outFile.write("\n")
         outFile.close()
 
