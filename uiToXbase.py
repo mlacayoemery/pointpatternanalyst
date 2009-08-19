@@ -10,14 +10,19 @@ if __name__=="__main__":
         dynamicSpecs=True
     else:
         dynamicSpecs=False
-    if sys.argv[5]=="true":
-        multipleAOIs=True
-    else:
-        multipleAOIs=False
-    if conversionType=="Tobii":
+    if conversionType=="Tab Separated Values (TSV)":
+        #add absolute path for shapefile library (relative to file import)
+        sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
+        import databasefile
+        dbf=databasefile.DatabaseFile([],[],[])
+        dbf.readTSV(inName)
+        if dynamicSpecs:
+            dbf.dynamicSpecs()
+        dbf.writeFile(outName)
+    elif conversionType=="Tobii TSV with Header":
         import lib.pop.tobiiDBF
-        lib.pop.tobiiDBF.tobiiParse(inName,outName,dynamicSpecs)
-    elif conversionType=="SensoMotoric":
+        lib.pop.tobiiDBF.tobiiParseFile(inName,outName,dynamicSpecs)
+    elif conversionType=="SMI TSV with Multiple Areas of Interest":
         import lib.pop.animeyeDBF
         lib.pop.animeyeDBF.animeyeParse(inName,outName,dynamicSpecs,multipleAOIs)
     else:

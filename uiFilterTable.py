@@ -2,7 +2,7 @@
 __author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 
 import sys
-import lib.shp.dbfFilter
+import lib.shp.databasefile
 
 if __name__=="__main__":
     inName=sys.argv[1]
@@ -11,14 +11,31 @@ if __name__=="__main__":
         keep=True
     else:
         keep=False
-    equal=sys.argv[4]
-    minimum=sys.argv[5]
-    maximum=sys.argv[6]
-    if equal == "#" and minimum == "#" and maximum == "#":
+    if sys.argv[4]=="#":
+        equal=None
+    else:
+        equal=sys.argv[4]
+    if sys.argv[5]=="#":
+        minimum=None
+    else:
+        minimum=sys.argv[5]
+    if sys.argv[6]=="#":
+        maximum=None
+    else:
+        maximum=sys.argv[6]
+        
+    if equal == None and minimum == None and maximum == None:
         raise ValueError, "You did not set any selection criteria. To select blank fields add a space to the equal comparison."
+
     outName=sys.argv[7]
     if sys.argv[8]=="true":
         retype=True
     else:
         retype=False
-    lib.shp.dbfFilter.filterTable(inName,outName,field,keep,equal,minimum,maximum,retype)
+
+    #begin processing
+    dbf=lib.shp.databasefile.DatabaseFile([],[],[],inName)
+    dbf.select(dbf.index(field),equal,minimum,maximum,keep)
+    if retype:
+        dbf.dynamicSpecs()
+    dbf.writeFile(outName)

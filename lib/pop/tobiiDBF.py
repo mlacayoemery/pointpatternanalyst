@@ -5,22 +5,31 @@ import sys
 sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
 import databasefile
 
-def tobiiParse(inName,outName,dynamicSpecs=False):
-    tobiiParseFile(open(inName,'r'),open(outName,'wb'),dynamicSpecs)
+def tobiiParseFile(inName,outName,dynamicSpecs=False):
+    tobiiParse(open(inName,'r'),open(outName,'wb'),dynamicSpecs)
 
-def tobiiParseFile(inFile,outFile,dynamicSpecs=False):
+def tobiiParse(inFile,outFile,dynamicSpecs=False):
     #read in file, remove header, strip and split lines
-    lines=inFile.readlines()
+    lines=inFile.read().strip()
     inFile.close()
-    lines.reverse()
-    lines=lines[:lines.index("\n")]
-    lines.reverse()
-    lines=[l.replace("\t\n","").split("\t") for l in lines]
+    #use last end of line delimted block for table
+    blockIndex=lines.rfind("\n\n")
+    if blockIndex != -1:
+        lines=lines[blockIndex+2:].split("\t\n")
+    else:
+        lines=lines.split("\t\n")
+    lines=[l.split("\t") for l in lines]
     header=lines.pop(0)
-    
-    d=databasefile.DatabaseFile(header,None,lines)
+    d=databasefile.DatabaseFile(header,None,[])
+    width=len(header)
+    for l in lines:
+        d.addRow(l+((width-len(l))*[""]))
+        
     if dynamicSpecs:
         d.dynamicSpecs()
     else:
         d.staticSpecs()
     d.write(outFile)
+
+if __name__=="__main__":
+    tobiiParseFile(sys.argv[1],sys.argv[2])
