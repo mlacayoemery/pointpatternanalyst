@@ -26,7 +26,7 @@ if __name__=="__main__":
             #remove dot from name, as ArcGIS doesn't like it
             outName=outFolder+"\\"+name.replace(".","_")+".dbf"
             gp.AddMessage("Converting "+inName)
-            lib.pop.tobiiDBF.tobiiParse(inName,outName,dynamicSpecs)
+            lib.pop.tobiiDBF.tobiiParseFile(inName,outName,dynamicSpecs)
     elif conversionType=="SensoMotoric":
         import lib.pop.animeyeDBF
         for name in os.listdir(inFolder):

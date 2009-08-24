@@ -4,7 +4,7 @@ __author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 import os
 import arcgisscripting
-import lib.shp.dbfFilter
+import lib.shp.databasefile
 
 if __name__=="__main__":
     #create geoprocessor
@@ -18,9 +18,22 @@ if __name__=="__main__":
         keep=True
     else:
         keep=False
-    equal=sys.argv[5]
-    minimum=sys.argv[6]
-    maximum=sys.argv[7]
+    if sys.argv[5]=="#":
+        equal=None
+    else:
+        equal=sys.argv[5]
+    if sys.argv[6]=="#":
+        minimum=None
+    else:
+        minimum=sys.argv[6]
+    if sys.argv[7]=="#":
+        maximum=None
+    else:
+        maximum=sys.argv[7]
+        
+    if equal == None and minimum == None and maximum == None:
+        raise ValueError, "You did not set any selection criteria. To select blank fields add a space to the equal comparison."
+        
     outFolder=sys.argv[8]
     if sys.argv[9]=="true":
         retype=True
@@ -32,4 +45,8 @@ if __name__=="__main__":
         inName=inFolder+"\\"+name
         outName=outFolder+"\\"+name
         gp.AddMessage("Processing "+inName)        
-        lib.shp.dbfFilter.filterTable(inName,outName,field,keep,equal,minimum,maximum,retype)
+        dbf=lib.shp.databasefile.DatabaseFile([],[],[],inName)
+        dbf.select(dbf.index(field),equal,minimum,maximum,keep)
+        if retype:
+            dbf.dynamicSpecs()
+        dbf.writeFile(outName)
