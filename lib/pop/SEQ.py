@@ -87,6 +87,9 @@ def Sequence(inName,aoiField,outName,format,userField=None,timeField=None,scaleF
     #give sequence file name if only one
     if len(records)==1:
         records[0][0]=inName[inName.rfind("\\")+1:]
+    else:
+        for i in range(len(records)):
+            records[i][0]=records[i][0]+inName[inName.rfind("\\")+1:]
         
     if format==0:#"Clustal G"
         lineWidth=72
