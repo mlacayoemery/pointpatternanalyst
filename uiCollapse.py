@@ -7,7 +7,7 @@ if __name__=="__main__":
     defaultOperation=sys.argv[3]
     outName=sys.argv[4]
 
-    if sys.argv[]=="#":
+    if sys.argv[5]=="#":
         minimumFields=[]
     else:
         minimumFields=sys.argv[5].split(";")
