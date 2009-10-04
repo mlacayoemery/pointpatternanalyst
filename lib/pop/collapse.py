@@ -3,7 +3,12 @@ __author__ = "Martin Lacayo-Emery <popanalyst@gmail.com>"
 import sys
 #add absolute path for shapefile library (relative to file import)
 sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
+#sys.path.append(sys.argv[0][:sys.argv[0].rfind("\\")+1]+"\\lib\\shp")
 import databasefile
+
+def tableDistance(inTableRow,tempTableRow,xFieldIndex,yFieldIndex):
+    return ((float(inTableRow[xFieldIndex])-float(tempTableRow[xFieldIndex]))**2\
+           + (float(inTableRow[yFieldIndex])-float(tempTableRow[yFieldIndex]))**2)**0.5
 
 def median(values):
     values.sort()
@@ -55,16 +60,31 @@ def sumString(values):
 def identity(values):
     return values[0]
 
-def CollapseFile(inName,collapseField,defaultOperationName,outName,minimumFields,meanFields,medianFields,maximumFields,sumFields):
+def CollapseFile(inName,defaultOperationName,outName,groupField,timeField,timeThreshold,xField,yField,distanceThreshold,minimumFields,meanFields,medianFields,maximumFields,sumFields):
     inTable=databasefile.DatabaseFile([],[],[],inName)
     outTable=databasefile.DatabaseFile(inTable.fieldnames,inTable.fieldspecs,[])
-    Collapse(inTable,collapseField,defaultOperationName,outTable,minimumFields,meanFields,medianFields,maximumFields,sumFields)
+    Collapse(inTable,defaultOperationName,outTable,groupField,timeField,timeThreshold,xField,yField,distanceThreshold,minimumFields,meanFields,medianFields,maximumFields,sumFields)
     outTable.refreshSpecs()
     outTable.writeFile(outName)
 
-def Collapse(inTable,collapseField,defaultOperationName,outTable,minimumFields,meanFields,medianFields,maximumFields,sumFields):
+def Collapse(inTable,defaultOperationName,outTable,groupField,timeField,timeThreshold,xField,yField,distanceThreshold,minimumFields,meanFields,medianFields,maximumFields,sumFields):
     tempTable=databasefile.DatabaseFile(inTable.fieldnames,inTable.fieldspecs,[inTable.removeRow(0)])
-    collapseFieldIndex=inTable.index(collapseField)
+    if groupField!=None:
+        groupFieldIndex=inTable.index(groupField)
+    else:
+        groupFieldIndex=None
+    if timeField!=None:
+        timeFieldIndex=inTable.index(timeField)
+    else:
+        timeFieldIndex=None
+    if xField!=None:
+        xFieldIndex=inTable.index(xField)
+    else:
+        xFieldIndex=None
+    if yField!=None:
+        yFieldIndex=inTable.index(yField)
+    else:
+        yFieldIndex=None
 
     #determine the default operation
     if defaultOperationName=="minimum":
@@ -120,15 +140,15 @@ def Collapse(inTable,collapseField,defaultOperationName,outTable,minimumFields,m
             operations[fieldIndex]=sumString
         else:
             operations[fieldIndex]=sum
-    operations[collapseFieldIndex]=identity
+    if groupField!=None:
+        operations[groupFieldIndex]=identity
     
     #loop over the table and group on collapse field
     for i in range(1,len(inTable)):
-        #if in same collapse group add to temp
-        if inTable[i][collapseFieldIndex]==tempTable[0][collapseFieldIndex]:
+        if (groupField == None or inTable[i][groupFieldIndex]==tempTable[0][groupFieldIndex]) and (distanceThreshold == None or tableDistance(inTable[i],tempTable[0],xFieldIndex,yFieldIndex)<=distanceThreshold):
             tempTable.addRow(inTable[i])
         #else perform operation on temp
-        else:
+        elif timeThreshold == None or float(tempTable[0][timeFieldIndex])-float(tempTable[-1][timeFieldIndex])>=timeThreshold:
             tempRow=[]
             for id,values in enumerate(apply(zip,tempTable.records)):
 ##                print len(values)
@@ -138,42 +158,10 @@ def Collapse(inTable,collapseField,defaultOperationName,outTable,minimumFields,m
                 tempRow.append(operations[id](map(tableTypes[id],values)))
             outTable.addRow(tempRow)
             tempTable.records=[inTable[i]]
-    tempRow=[]
-    for id,values in enumerate(apply(zip,tempTable.records)):
-        tempRow.append(operations[id](map(tableTypes[id],values)))
-    outTable.addRow(tempRow)
-
-
-if __name__=="__main__":
-    inName=sys.argv[1]
-    collapseField=sys.argv[2]
-    defaultOperation=sys.argv[3]
-    outName=sys.argv[4]
-
-    if sys.argv[5]=="#":
-        minimumFields=[]
-    else:
-        minimumFields=sys.argv[5].split(";")
-
-    if sys.argv[6]=="#":
-        meanFields=[]
-    else:
-        meanFields=sys.argv[6].split(";")
-
-    if sys.argv[7]=="#":
-        medianFields=[]
-    else:
-        medianFields=sys.argv[7].split(";")
-
-    if sys.argv[8]=="#":
-        maximumFields=[]
-    else:
-        maximumFields=sys.argv[8].split(";")
-
-    if sys.argv[9]=="#":
-        sumFields=[]
-    else:
-        sumFields=sys.argv[9].split(";")
-
-    CollapseFile(inName,collapseField,defaultOperation,outName,minimumFields,meanFields,medianFields,maximumFields,sumFields)
-    
+        else:
+            tempTable.records=[inTable[i]]
+    if timeThreshold == None or float(tempTable[0][timeFieldIndex])-float(tempTable[-1][timeFieldIndex])>=timeThreshold:
+        tempRow=[]
+        for id,values in enumerate(apply(zip,tempTable.records)):
+            tempRow.append(operations[id](map(tableTypes[id],values)))
+        outTable.addRow(tempRow)
