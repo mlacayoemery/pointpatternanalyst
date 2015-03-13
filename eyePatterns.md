@@ -1,0 +1,1 @@
+eyePatterns is limited to one character AOIs.
